@@ -347,6 +347,10 @@
           <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="5" y="5" width="8.5" height="8.5" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M3 10.5V3.8C3 3.3 3.3 3 3.8 3h6.7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
           <span data-i18n="copy">Copiar email</span>
         </button>
+        <button class="btn btn-ghost" type="button" id="download-pdf">
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2.5v8M4.5 7 8 10.5 11.5 7M3 13.5h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span data-i18n="pdf">Descargar CV en PDF</span>
+        </button>
       </div>
       <p class="contact-line">ajmercato@gmail.com &nbsp;·&nbsp; <a href="tel:+541159056478">+54 11 5905 6478</a></p>
       <p class="toast" id="toast" role="status" aria-live="polite"></p>
@@ -503,9 +507,10 @@
   /* Completá tus links y aparecen en la firma. Vacíos no se muestran. */
   const LINKS = {
     LinkedIn: "",
-    GitHub: "",
-    "CV en PDF": ""
+    GitHub: ""
   };
+  /* URL pública de esta página, para que aparezca en el PDF. */
+  const SITE_URL = "";
 
   const EN = {
     where: "Buenos Aires",
@@ -518,7 +523,7 @@
     preheader: "React, HTML, CSS and Salesforce Marketing Cloud. Tested in Outlook and dark mode.",
     hello: "Hi, I'm",
     lede: "Web developer specialized in <strong>marketing technology</strong>. I build websites, web apps, CloudPages and email campaigns for international teams at OMC, from implementation to delivery.",
-    reply: "Reply", copy: "Copy email",
+    reply: "Reply", copy: "Copy email", pdf: "Download CV (PDF)",
     skillsTitle: "What I work with",
     "sk-responsive": "Responsive design", "sk-components": "Reusable components",
     "sk-emailTitle": "Email", "sk-email1": "HTML templates from scratch", "sk-email2": "Outlook compatibility",
@@ -618,6 +623,204 @@
   setMode(savedMode || (prefersDark ? "dark" : "light"));
   setLang(store.get("cv-lang") || ((navigator.language || "es").startsWith("es") ? "es" : "en"));
   renderLinks();
+
+  /* ---------- CV en PDF: se arma con el contenido actual de la página ---------- */
+  let downloadsApi = null;
+  if (window.claude && typeof window.claude.use === "function") {
+    window.claude.use("downloads").then(api => { downloadsApi = api; }).catch(() => {});
+  }
+
+  function loadJsPDF() {
+    if (window.jspdf) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+      const s = document.createElement("script");
+      s.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+      s.onload = resolve; s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  const clean = s => (s || "").replace(/\s+/g, " ").trim();
+  const txt = (sel, root = document) => clean(root.querySelector(sel)?.textContent);
+
+  function avatarDataUrl() {
+    const el = document.querySelector(".avatar");
+    if (!el) return null;
+    const m = getComputedStyle(el).backgroundImage.match(/url\(["']?(data:image\/jpeg;base64,[^"')]+)/);
+    return m ? m[1] : null;
+  }
+
+  async function buildPdf() {
+    await loadJsPDF();
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: "mm", format: "a4" });
+    const W = 210, H = 297, M = 16, CW = W - M * 2;
+    const INK = [27, 33, 48], MUTED = [93, 100, 115], ACC = [43, 54, 217], LINE = [211, 215, 207];
+    const PT = 0.3528;
+    let y = M;
+
+    const ensure = h => { if (y + h > H - M) { doc.addPage(); y = M; } };
+    const font = (size, style = "normal", color = INK) => {
+      doc.setFont("helvetica", style); doc.setFontSize(size); doc.setTextColor(...color);
+    };
+    const lines = (text, x, width, size, style, color, lh = 1.32) => {
+      font(size, style, color);
+      const ls = doc.splitTextToSize(text, width);
+      const step = size * PT * lh;
+      ls.forEach(l => { ensure(step); doc.text(l, x, y + size * PT * .82); y += step; });
+    };
+    const bullet = (text, x, width, size = 9.2) => {
+      font(size, "normal", INK);
+      const ls = doc.splitTextToSize(text, width - 3.5);
+      const step = size * PT * 1.3;
+      ensure(step);
+      doc.text("•", x, y + size * PT * .82);
+      ls.forEach(l => { ensure(step); doc.text(l, x + 3.5, y + size * PT * .82); y += step; });
+      y += .6;
+    };
+    const heading = title => {
+      ensure(14);
+      y += 3;
+      font(11.5, "bold", ACC);
+      doc.text(title, M, y + 11.5 * PT * .82);
+      y += 11.5 * PT * 1.25;
+      doc.setDrawColor(...LINE); doc.setLineWidth(.3);
+      doc.line(M, y, M + CW, y);
+      y += 3;
+    };
+
+    /* Encabezado */
+    const photo = avatarDataUrl();
+    const PH = 26;
+    const headW = photo ? CW - PH - 6 : CW;
+    if (photo) {
+      try { doc.addImage(photo, "JPEG", M + CW - PH, M, PH, PH); } catch (e) {}
+    }
+    const name = clean(document.querySelector("h1.name").textContent);
+    lines(name, M, headW, 24, "bold", INK, 1.1);
+    y += 1;
+    const role = txt(".sig-meta").split("·")[0].trim();
+    lines(role + " · Marketing Technology", M, headW, 11.5, "normal", ACC);
+    y += 1.5;
+    const contact = ["ajmercato@gmail.com", "+54 11 5905 6478", "Buenos Aires, Argentina"];
+    if (SITE_URL) contact.push(SITE_URL);
+    Object.entries(LINKS).forEach(([, url]) => { if (url) contact.push(url.replace(/^https?:\/\//, "")); });
+    lines(contact.join("   |   "), M, headW, 8.8, "normal", MUTED);
+    y = Math.max(y, M + (photo ? PH : 0)) + 2;
+
+    /* Perfil */
+    heading(lang === "en" ? "Profile" : "Perfil");
+    lines(clean(document.querySelector(".lede").textContent), M, CW, 9.6, "normal", INK, 1.38);
+
+    /* Skills */
+    const blocks = document.querySelectorAll("section.block");
+    const [skillsSec, expSec, eduSec] = blocks;
+    heading(txt("h2", skillsSec));
+    const LW = 34;
+    skillsSec.querySelectorAll(".skill-row").forEach(row => {
+      const label = txt("h3", row);
+      const items = [...row.querySelectorAll(".chips li")].map(li => clean(li.textContent)).join(", ");
+      const startY = y;
+      font(9.2, "bold", INK);
+      const step = 9.2 * PT * 1.32;
+      ensure(step);
+      doc.text(label, M, y + 9.2 * PT * .82);
+      lines(items, M + LW, CW - LW, 9.2, "normal", INK);
+      y = Math.max(y, startY + step) + 1.2;
+    });
+
+    /* Experiencia */
+    heading(txt("h2", expSec));
+    expSec.querySelectorAll(".job").forEach((job, i) => {
+      if (i) y += 2;
+      ensure(12);
+      const when = job.querySelector(".when");
+      const dates = clean((when.querySelector("span:not(.now)") || when).textContent);
+      const title = txt("h3", job) + "  ·  " + txt(".company", job);
+      font(10.5, "bold", INK);
+      doc.text(title, M, y + 10.5 * PT * .82);
+      font(9, "normal", MUTED);
+      doc.text(dates, M + CW, y + 10.5 * PT * .82, { align: "right" });
+      y += 10.5 * PT * 1.45;
+      const groups = job.querySelectorAll(".group");
+      if (groups.length) {
+        groups.forEach(g => {
+          ensure(8);
+          lines(txt("h4", g), M, CW, 9, "bold", MUTED);
+          y += .4;
+          g.querySelectorAll("li").forEach(li => bullet(clean(li.textContent), M + 1, CW - 1));
+          y += .6;
+        });
+      } else {
+        job.querySelectorAll("li").forEach(li => bullet(clean(li.textContent), M + 1, CW - 1));
+      }
+    });
+
+    /* Formación e idiomas, en dos columnas */
+    const eduTitles = eduSec.querySelectorAll("h2");
+    const GAP = 10, colW = (CW - GAP) / 2, colX = [M, M + colW + GAP];
+    ensure(30);
+    y += 2.5;
+    const topY = y;
+    [0, 1].forEach(i => {
+      font(11.5, "bold", ACC);
+      doc.text(clean(eduTitles[i].textContent), colX[i], topY + 11.5 * PT * .82);
+      doc.setDrawColor(...LINE); doc.setLineWidth(.3);
+      doc.line(colX[i], topY + 11.5 * PT * 1.25, colX[i] + colW, topY + 11.5 * PT * 1.25);
+    });
+    const bodyY = topY + 11.5 * PT * 1.25 + 3;
+    y = bodyY;
+    eduSec.querySelectorAll(".fact").forEach(f => {
+      const detail = f.querySelector("p").innerText.split("\n").map(clean).filter(Boolean).join(" · ");
+      lines(txt("h3", f), colX[0], colW, 9.6, "bold", INK);
+      lines(detail, colX[0], colW, 8.8, "normal", MUTED);
+      y += 1.2;
+    });
+    const leftEnd = y;
+    y = bodyY;
+    eduSec.querySelectorAll(".lang").forEach(l => {
+      lines(txt("h3", l), colX[1], colW, 9.6, "bold", INK);
+      lines(txt("small", l), colX[1], colW, 8.8, "normal", MUTED);
+      y += 1.2;
+    });
+    y = Math.max(y, leftEnd);
+
+    /* Pie con número de página */
+    const pages = doc.getNumberOfPages();
+    for (let p = 1; p <= pages; p++) {
+      doc.setPage(p);
+      font(7.5, "normal", MUTED);
+      doc.text(name + " · CV", M, H - 8);
+      if (pages > 1) doc.text(p + " / " + pages, M + CW, H - 8, { align: "right" });
+    }
+    return doc.output("blob");
+  }
+
+  document.getElementById("download-pdf").addEventListener("click", async () => {
+    const t = document.getElementById("toast");
+    const en = lang === "en";
+    const filename = "Anthony_Mas_y_Rubi_CV_" + (en ? "EN" : "ES") + ".pdf";
+    t.textContent = en ? "Generating PDF…" : "Generando el PDF…";
+    let blob;
+    try { blob = await buildPdf(); }
+    catch (e) { t.textContent = en ? "Couldn't generate the PDF. Check your connection and try again." : "No se pudo generar el PDF. Revisá tu conexión y probá de nuevo."; return; }
+
+    if (downloadsApi) {
+      try {
+        await downloadsApi.save({ filename, data: blob });
+        t.textContent = en ? "CV downloaded." : "CV descargado.";
+      } catch (e) {
+        t.textContent = e && e.code === "declined" ? "" : (en ? "Couldn't download the PDF here." : "No se pudo descargar el PDF desde acá.");
+      }
+      return;
+    }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+    t.textContent = en ? "CV downloaded." : "CV descargado.";
+  });
 </script>
 </body>
 </html>
