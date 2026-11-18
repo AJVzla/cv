@@ -141,9 +141,12 @@
   .btn svg { width: 16px; height: 16px; }
   .contact-line { font-size: 14px; color: var(--muted); margin: 10px 0 0; }
   .contact-line a { color: inherit; }
+  .contact-line span, .contact-line a { white-space: nowrap; }
+  .headers dd { overflow-wrap: anywhere; }
   .toast {
     font-size: 13px; color: var(--muted); min-height: 1.4em; margin: 6px 0 0;
   }
+  .toast:empty { min-height: 0; margin: 0; }
 
   section.block { padding: 40px 0 8px; border-top: 1px solid var(--line); margin-top: 40px; }
   section.block:first-of-type { margin-top: 32px; }
@@ -268,21 +271,88 @@
 
   /* ---------- Responsive ---------- */
   @media (max-width: 640px) {
-    .bar { flex-direction: column; align-items: stretch; gap: 10px; }
-    .brand .where { display: none; }
-    .controls { justify-content: space-between; }
-    .seg-label { display: none; }
-    .skill-row, .job, .facts { grid-template-columns: 1fr; }
-    .facts { gap: 40px; }
-    .from-wrap { gap: 14px; }
-    .from-wrap .avatar { width: 48px; height: 48px; }
-    .sig-wrap .avatar { width: 72px; height: 72px; }
-    .skill-row { gap: 8px; }
-    .skill-row h3 { padding-top: 0; }
-    .job { gap: 4px; }
-    .lang { grid-template-columns: 90px 1fr; }
+    body { font-size: 16px; }
+
+    /* Barra: no fija, dos filas compactas */
+    .bar {
+      position: static;
+      display: grid; grid-template-columns: 1fr auto; gap: 12px;
+      align-items: center; padding: 14px 12px 12px;
+    }
+    .controls { display: contents; }
+    .brand { grid-column: 1; grid-row: 1; min-width: 0; }
+    .brand > span:nth-child(2) { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .brand .where, .seg-label { display: none; }
+    .seg-lang { grid-column: 2; grid-row: 1; }
+    .seg-mode { grid-column: 1 / -1; grid-row: 2; display: flex; }
+    .seg-mode button { flex: 1; }
+    .seg button { min-height: 40px; padding: 8px 12px; font-size: 14px; }
+
+    main { padding: 0 10px 40px; }
+    .mail { border-radius: 16px; }
+
+    /* Encabezado del email */
+    .headers { padding: 20px 18px 16px; }
+    .from-wrap { flex-direction: column; gap: 14px; }
+    .from-wrap .avatar { width: 56px; height: 56px; }
+    .headers dl { grid-template-columns: max-content 1fr; gap: 6px 14px; font-size: 14px; line-height: 1.45; }
+    .headers dd { margin-bottom: 0; }
+    .preheader { font-size: 13.5px; margin-top: 12px; }
+
+    .body { padding: 28px 18px 4px; }
+    h1.name { margin-bottom: 14px; }
+    .lede { font-size: 17.5px; margin-bottom: 22px; }
+
+    /* Botones del mismo ancho y fáciles de tocar */
+    .actions { flex-direction: column; align-items: stretch; gap: 10px; }
+    .btn { justify-content: center; min-height: 50px; font-size: 16px; }
+    .contact-line { text-align: center; line-height: 1.8; }
+    .toast { text-align: center; }
+
+    /* Secciones más juntas */
+    section.block { margin-top: 28px; padding-top: 28px; }
+    section.block:first-of-type { margin-top: 24px; }
+    h2 { margin-bottom: 18px; }
+
+    .skills { gap: 18px; }
+    .skill-row { grid-template-columns: 1fr; gap: 8px; }
+    .skill-row h3 { padding-top: 0; font-size: 15.5px; }
+    .chips li { font-size: 14px; padding: 6px 11px; }
+
+    .job { grid-template-columns: 1fr; gap: 6px; padding-bottom: 28px; }
+    .when { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding-top: 0; }
+    .when .when-br { display: none; }
+    .when .now { margin-top: 0; }
+    .company { margin-bottom: 12px; }
+    .group li, .job ul.plain li { font-size: 15px; line-height: 1.5; margin: 4px 0; }
+    .group ul, .job ul.plain { padding-left: 18px; }
+
+    .facts { grid-template-columns: 1fr; gap: 32px; }
+    .lang { grid-template-columns: 84px 1fr; gap: 6px 12px; }
+    .lang h3 { font-size: 16px; }
+    .fact h3 { font-size: 17px; }
+    .lang small { margin-top: -4px; }
+
+    .signoff { margin-top: 28px; padding: 28px 0 36px; }
+    .sig-wrap { gap: 16px; }
+    .sig-wrap .avatar { width: 68px; height: 68px; }
+    .sig { font-size: 23px; }
+    .sig-meta span { display: block; }
+    .sig-meta .sep { display: none; }
+
+    .mail-foot { padding: 18px; }
+
+    /* Outlook en mobile */
+    [data-mode="outlook"] .body { padding: 18px 14px 0; }
+    [data-mode="outlook"] .btn { min-height: 0; padding: 10px; font-size: 15px; }
+    [data-mode="outlook"] .from-wrap .avatar { width: 40px; height: 40px; }
+  }
+  @media (max-width: 360px) {
+    .seg button { padding: 8px 9px; font-size: 13px; }
+    .ol-year { display: none; }
     .headers dl { grid-template-columns: 1fr; gap: 0; }
-    .headers dd { margin-bottom: 8px; }
+    .headers dt { font-size: 12.5px; margin-top: 6px; }
+    .headers .row:first-child dt { margin-top: 0; }
   }
   @media print {
     .bar, .actions, .toast, .outlook-banner { display: none !important; }
@@ -301,12 +371,12 @@
   </div>
   <div class="controls">
     <span class="seg-label" id="render-label" data-i18n="renderLabel">Ver como:</span>
-    <div class="seg" role="group" aria-labelledby="render-label">
+    <div class="seg seg-mode" role="group" aria-labelledby="render-label">
       <button type="button" data-mode-btn="light" aria-pressed="true" data-i18n="modeLight">Claro</button>
       <button type="button" data-mode-btn="dark" aria-pressed="false" data-i18n="modeDark">Oscuro</button>
-      <button type="button" data-mode-btn="outlook" aria-pressed="false">Outlook 2016</button>
+      <button type="button" data-mode-btn="outlook" aria-pressed="false">Outlook<span class="ol-year"> 2016</span></button>
     </div>
-    <div class="seg" role="group" aria-label="Idioma / Language">
+    <div class="seg seg-lang" role="group" aria-label="Idioma / Language">
       <button type="button" data-lang-btn="es" aria-pressed="true">ES</button>
       <button type="button" data-lang-btn="en" aria-pressed="false">EN</button>
     </div>
@@ -352,7 +422,7 @@
           <span data-i18n="pdf">Descargar CV en PDF</span>
         </button>
       </div>
-      <p class="contact-line">ajmercato@gmail.com &nbsp;·&nbsp; <a href="tel:+541159056478">+54 11 5905 6478</a></p>
+      <p class="contact-line"><span>ajmercato@gmail.com</span> <span class="sep" aria-hidden="true">&nbsp;·&nbsp;</span> <a href="tel:+541159056478">+54 11 5905 6478</a></p>
       <p class="toast" id="toast" role="status" aria-live="polite"></p>
 
       <section class="block" aria-labelledby="s-skills">
@@ -400,7 +470,7 @@
         <h2 id="s-exp" data-i18n="expTitle">Dónde trabajé</h2>
 
         <article class="job">
-          <div class="when"><span data-i18n="mccannDates">Oct 2022 – hoy</span><br><span class="now" data-i18n="current">Actual</span></div>
+          <div class="when"><span data-i18n="mccannDates">Oct 2022 – hoy</span><br class="when-br"><span class="now" data-i18n="current">Actual</span></div>
           <div>
             <h3>Web Developer</h3>
             <p class="company">Omnicom</p>
@@ -490,7 +560,7 @@
           <span class="avatar" role="img" aria-label="Foto de Anthony Mas y Rubi"></span>
           <div>
             <p class="sig">Anthony Mas y Rubi</p>
-            <p class="sig-meta">Web Developer · Buenos Aires, Argentina</p>
+            <p class="sig-meta"><span>Web Developer</span><span class="sep"> · </span><span>Buenos Aires, Argentina</span></p>
           </div>
         </div>
         <div class="links" id="links"></div>
