@@ -63,7 +63,7 @@ const HEALTH_ENDPOINT = "https://cv-chat.anthonymasyrubi.workers.dev/health/summ
   /* ---------- columnas (pasos) ---------- */
   function columnChart(box, rows, { value, label, tipHtml, goal }) {
     box.innerHTML = "";
-    const W = box.clientWidth || 600, H = W < 480 ? 180 : 220;
+    const W = box.clientWidth || 600, H = W < 480 ? 180 : W > 700 ? 250 : 220;
     const m = { t: 22, r: goal ? 44 : 8, b: 26, l: 38 };
     const iw = W - m.l - m.r, ih = H - m.t - m.b;
     const max = niceMax(Math.max(goal || 0, ...rows.map(value)));
@@ -91,7 +91,8 @@ const HEALTH_ENDPOINT = "https://cv-chat.anthonymasyrubi.workers.dev/health/summ
       if (i === maxI && v > 0) {
         const t = el("text", { x: x + bw / 2, y: y(v) - 6, "text-anchor": "middle", class: "fx-val" }, svg); t.textContent = compact(v);
       }
-      if (i % (W < 480 ? 7 : 5) === 0 || i === rows.length - 1) {
+      const every = W < 480 ? 7 : 5;
+      if ((i % every === 0 && i < rows.length - Math.ceil(every / 2)) || i === rows.length - 1) {
         const t = el("text", { x: x + bw / 2, y: H - 6, "text-anchor": "middle", class: "fx-axis" }, svg);
         t.textContent = i === rows.length - 1 ? "Hoy" : fmtShort(r.date);
       }
@@ -137,7 +138,7 @@ const HEALTH_ENDPOINT = "https://cv-chat.anthonymasyrubi.workers.dev/health/summ
       if (i === nights.length - 1) {
         const t = el("text", { x: x + bw / 2, y: y(n.hours) - 6, "text-anchor": "middle", class: "fx-val" }, svg); t.textContent = nf1.format(n.hours) + " h";
       }
-      if (i % 3 === 0 || i === nights.length - 1) {
+      if ((i % 3 === 0 && i < nights.length - 2) || i === nights.length - 1) {
         const t = el("text", { x: x + bw / 2, y: H - 6, "text-anchor": "middle", class: "fx-axis" }, svg);
         t.textContent = n.date === today ? "Hoy" : fmtShort(n.date);
       }
@@ -193,9 +194,58 @@ const HEALTH_ENDPOINT = "https://cv-chat.anthonymasyrubi.workers.dev/health/summ
     hit.addEventListener("pointerleave", () => { cross.setAttribute("opacity", 0); hideTip(); });
   }
 
-  /* ---------- piezas de la página ---------- */
-  function stat(label, value, note, extra = "") {
-    return `<div class="fx-stat"><p class="fx-stat-label">${label}</p><p class="fx-stat-value">${value}</p>${note ? `<p class="fx-stat-note">${note}</p>` : ""}${extra}</div>`;
+  /* ---------- rango de pulso por día (barras flotantes min–max + promedio) ---------- */
+  function rangeChart(box, rows) {
+    box.innerHTML = "";
+    const have = rows.filter(r => r.hr_min != null && r.hr_max != null);
+    if (!have.length) { box.innerHTML = '<p class="fx-empty">Todavía no hay pulso registrado.</p>'; return; }
+    const W = box.clientWidth || 500, H = W < 480 ? 170 : 200;
+    const m = { t: 14, r: 8, b: 26, l: 34 };
+    const iw = W - m.l - m.r, ih = H - m.t - m.b;
+    const lo = Math.floor(Math.min(...have.map(r => r.hr_min)) / 20) * 20, hi = Math.ceil(Math.max(...have.map(r => r.hr_max)) / 20) * 20;
+    const y = v => m.t + ih - ((v - lo) / (hi - lo)) * ih;
+    const band = iw / rows.length, bw = Math.min(10, Math.max(3, band - 3));
+    const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: "img", "aria-label": "Pulso mínimo, máximo y promedio por día" }, box);
+    const grid = css("--line"), accent = css("--accent"), ink = css("--ink");
+    for (const t of [lo, (lo + hi) / 2, hi]) {
+      el("line", { x1: m.l, x2: W - m.r, y1: y(t), y2: y(t), stroke: grid, "stroke-width": 1 }, svg);
+      const tx = el("text", { x: m.l - 6, y: y(t) + 4, "text-anchor": "end", class: "fx-axis" }, svg); tx.textContent = Math.round(t);
+    }
+    rows.forEach((r, i) => {
+      const cx = m.l + i * band + band / 2;
+      if (r.hr_min != null) {
+        el("rect", { x: cx - bw / 2, y: y(r.hr_max), width: bw, height: Math.max(2, y(r.hr_min) - y(r.hr_max)), rx: Math.min(4, bw / 2), fill: accent, opacity: .35 }, svg);
+        if (r.hr_avg != null) el("rect", { x: cx - bw / 2 - 1, y: y(r.hr_avg) - 1, width: bw + 2, height: 2.5, fill: ink }, svg);
+      }
+      const every = W < 480 ? 7 : 5;
+      if ((i % every === 0 && i < rows.length - Math.ceil(every / 2)) || i === rows.length - 1) {
+        const t = el("text", { x: cx, y: H - 6, "text-anchor": "middle", class: "fx-axis" }, svg);
+        t.textContent = i === rows.length - 1 ? "Hoy" : fmtShort(r.date);
+      }
+      const hit = el("rect", { x: m.l + i * band, y: m.t, width: band, height: ih, fill: "transparent" }, svg);
+      hit.addEventListener("pointermove", e => showTip(e, r.hr_min == null ? `<b>${fmtDay(r.date)}</b><br>Sin datos`
+        : `<b>${fmtDay(r.date)}</b><br>Mín. ${r.hr_min} · Prom. ${r.hr_avg ?? "—"} · Máx. ${r.hr_max} bpm`));
+      hit.addEventListener("pointerleave", hideTip);
+    });
+  }
+
+  /* ---------- piezas del tablero ---------- */
+  const mean = arr => { const v = arr.filter(x => x != null); return v.length ? v.reduce((s, x) => s + x, 0) / v.length : null; };
+  const sum = arr => arr.reduce((s, x) => s + (x || 0), 0);
+
+  // Diferencia contra una referencia, siempre con flecha y texto (nunca solo color)
+  function delta(now, ref, { unit = "%", lowerIsBetter = false, abs = false } = {}) {
+    if (now == null || ref == null || ref === 0) return "";
+    const diff = abs ? now - ref : ((now - ref) / ref) * 100;
+    const r = Math.round(diff * (abs ? 10 : 1)) / (abs ? 10 : 1);
+    if (r === 0) return '<span class="fx-delta">= igual</span>';
+    const arrow = r > 0 ? "▲" : "▼";
+    const txt = abs ? nf1.format(Math.abs(r)) + " " + unit : Math.abs(r) + "%";
+    return `<span class="fx-delta">${arrow} ${txt}</span>`;
+  }
+
+  function kpi(id, label, value, note, extra = "") {
+    $(id).innerHTML = `<p class="fx-kpi-label">${label}</p><p class="fx-kpi-value">${value}</p>${note ? `<p class="fx-kpi-note">${note}</p>` : ""}${extra}`;
   }
 
   function renderPulse(h) {
@@ -203,75 +253,131 @@ const HEALTH_ENDPOINT = "https://cv-chat.anthonymasyrubi.workers.dev/health/summ
     if (h.last_bpm == null) { $("fx-bpm").textContent = "—"; $("fx-pulse-meta").textContent = "Sin pulso registrado"; fig.classList.add("is-idle"); return; }
     $("fx-bpm").textContent = h.last_bpm;
     const stale = h.last_minutes_ago > 180;
-    $("fx-pulse-meta").textContent = (stale ? "Sin datos recientes · último " : "Último pulso · ") + ago(h.last_minutes_ago);
+    $("fx-pulse-meta").textContent = (stale ? "Sin datos recientes · " : "") + ago(h.last_minutes_ago);
     fig.classList.toggle("is-idle", stale);
     fig.style.setProperty("--beat", (60 / Math.max(35, Math.min(200, h.last_bpm))).toFixed(3) + "s");
   }
+
+  function paceText(p) { return `${Math.floor(p)}:${String(Math.round((p % 1) * 60)).padStart(2, "0")}`; }
 
   let DATA = null;
 
   function render() {
     const d = DATA; if (!d) return;
-    const today = d.today || d.days[d.days.length - 1];
-    renderPulse(d.heart || {});
-    $("fx-updated").textContent = d.updated_at ? "Actualizado " + ago(Math.round((Date.now() - d.updated_at) / 60000)) : "Todavía sin datos";
+    const days = d.days || [];
+    const today = d.today || days[days.length - 1];
+    const past = days.slice(0, -1);                     // los 29 días anteriores a hoy
+    const h = d.heart || {};
+    const nights = (d.sleep || []).slice(-14);
+    const ws = d.workouts || [];
 
+    // Encabezado
+    const minsAgo = d.updated_at ? Math.round((Date.now() - d.updated_at) / 60000) : null;
+    $("fx-updated").textContent = minsAgo == null ? "Todavía sin datos" : "Actualizado " + ago(minsAgo);
+    document.querySelector(".fx-live").classList.toggle("is-stale", minsAgo == null || minsAgo > 120);
+    renderPulse(h);
+
+    // Indicadores (hoy contra el promedio de los días anteriores)
+    const avgSteps = mean(past.filter(x => x.steps > 0).map(x => x.steps));
     const pct = Math.min(100, Math.round((today.steps / STEP_GOAL) * 100));
-    const lastNight = (d.sleep || []).filter(n => n.date === today.date).pop();
-    $("fx-today").innerHTML =
-      stat("Pasos", nf.format(today.steps), `${pct}% de la meta de ${nf.format(STEP_GOAL)}`,
-        `<div class="fx-meter" role="img" aria-label="${pct}% de la meta"><i style="width:${pct}%"></i></div>`) +
-      stat("Distancia", nf1.format(today.distance_km) + " km", "") +
-      stat("Calorías activas", nf.format(today.active_kcal) + " kcal", "") +
-      stat("Sueño anoche", lastNight ? nf1.format(lastNight.hours) + " h" : "—", lastNight ? "" : "Sin registro");
+    kpi("kpi-steps", "Pasos hoy", nf.format(today.steps), `${pct}% de la meta`,
+      `<div class="fx-meter" role="img" aria-label="${pct}% de la meta de ${nf.format(STEP_GOAL)}"><i style="width:${pct}%"></i></div>`);
+    kpi("kpi-distance", "Distancia hoy", nf1.format(today.distance_km) + " <small>km</small>",
+      avgSteps ? `Prom. ${nf1.format(mean(past.filter(x => x.steps > 0).map(x => x.distance_km)))} km/día` : "");
+    kpi("kpi-kcal", "Calorías activas", nf.format(today.active_kcal) + " <small>kcal</small>",
+      `Prom. ${nf.format(Math.round(mean(past.filter(x => x.steps > 0).map(x => x.active_kcal)) || 0))} kcal/día`);
+    const lastNight = nights.filter(n => n.date === today.date).pop();
+    const avgSleep = mean(nights.map(n => n.hours));
+    kpi("kpi-sleep", "Sueño anoche", lastNight ? nf1.format(lastNight.hours) + " <small>h</small>" : "—",
+      lastNight ? `${delta(lastNight.hours, avgSleep, { abs: true, unit: "h" }) || "Igual"} vs. promedio` : "Sin registro");
+    const rhrAvg = mean(past.map(x => x.resting_bpm));
+    kpi("kpi-rhr", "Pulso en reposo", h.resting ? h.resting.value + " <small>bpm</small>" : "—",
+      h.resting ? (rhrAvg ? `${delta(h.resting.value, rhrAvg, { abs: true, unit: "bpm" }) || "Igual"} vs. promedio` : relDay(h.resting.date, today.date)) : "Sin registro");
 
-    // Pasos
-    const withSteps = d.days.filter(x => x.steps > 0);
-    const avg = withSteps.length ? Math.round(withSteps.reduce((s, x) => s + x.steps, 0) / withSteps.length) : 0;
-    const goalDays = d.days.filter(x => x.steps >= STEP_GOAL).length;
-    $("fx-steps-sub").textContent = withSteps.length ? `Promedio de ${nf.format(avg)} pasos por día · ${goalDays} ${goalDays === 1 ? "día" : "días"} llegué a la meta` : "Todavía no hay pasos registrados.";
-    columnChart($("fx-steps-chart"), d.days, {
+    // Pasos por día
+    const withSteps = days.filter(x => x.steps > 0);
+    const avg = withSteps.length ? Math.round(sum(withSteps.map(x => x.steps)) / withSteps.length) : 0;
+    const goalDays = days.filter(x => x.steps >= STEP_GOAL).length;
+    $("fx-steps-sub").textContent = withSteps.length ? `Prom. ${nf.format(avg)} · ${goalDays} ${goalDays === 1 ? "día" : "días"} sobre la meta` : "Sin pasos registrados";
+    columnChart($("fx-steps-chart"), days, {
       value: x => x.steps, goal: STEP_GOAL, label: "Pasos por día, últimos 30 días",
       tipHtml: x => `<b>${fmtDay(x.date)}</b><br>${nf.format(x.steps)} pasos<br>${nf1.format(x.distance_km)} km · ${nf.format(x.active_kcal)} kcal`,
     });
 
-    // Corazón
-    const h = d.heart || {};
-    $("fx-heart-stats").innerHTML =
-      stat("En reposo", h.resting ? h.resting.value + " bpm" : "—", h.resting ? relDay(h.resting.date, today.date) : "Sin registro") +
-      stat("Rango de hoy", today.hr_min != null ? `${today.hr_min}–${today.hr_max} bpm` : "—", today.hr_avg != null ? `Promedio ${today.hr_avg} bpm` : "") +
-      stat("VO₂ máx", h.vo2max ? nf1.format(h.vo2max.value) : "—", h.vo2max ? "ml/kg/min · " + relDay(h.vo2max.date, today.date) : "Tu reloj no lo informa");
-    lineChart($("fx-rhr-chart"), d.days, { value: x => x.resting_bpm, label: "Pulso en reposo por día", unit: "bpm" });
+    // Últimos 7 días contra los 7 anteriores
+    const w1 = days.slice(-7), w0 = days.slice(-14, -7);
+    const inRange = (list, from, to) => list.filter(w => w.date >= from && w.date <= to);
+    const wk1 = w1.length ? inRange(ws, w1[0].date, w1[w1.length - 1].date) : [];
+    const wk0 = w0.length ? inRange(ws, w0[0].date, w0[w0.length - 1].date) : [];
+    const s1 = nights.filter(n => w1.some(x => x.date === n.date)), s0 = nights.filter(n => w0.some(x => x.date === n.date));
+    const cell = (label, value, note) => `<div><dt>${label}</dt><dd>${value}</dd><p class="fx-kpi-note">${note || "&nbsp;"}</p></div>`;
+    $("fx-week").innerHTML =
+      cell("Pasos", nf.format(sum(w1.map(x => x.steps))), delta(sum(w1.map(x => x.steps)), sum(w0.map(x => x.steps)))) +
+      cell("Distancia", nf1.format(sum(w1.map(x => x.distance_km))) + " km", delta(sum(w1.map(x => x.distance_km)), sum(w0.map(x => x.distance_km)))) +
+      cell("Entrenamientos", wk1.length, wk0.length || wk1.length ? `${wk1.length - wk0.length >= 0 ? "▲" : "▼"} ${Math.abs(wk1.length - wk0.length)} vs. semana anterior` : "") +
+      cell("Minutos activos", nf.format(sum(wk1.map(w => w.duration_min))), delta(sum(wk1.map(w => w.duration_min)), sum(wk0.map(w => w.duration_min)))) +
+      cell("Sueño promedio", s1.length ? nf1.format(mean(s1.map(n => n.hours))) + " h" : "—", s1.length && s0.length ? delta(mean(s1.map(n => n.hours)), mean(s0.map(n => n.hours)), { abs: true, unit: "h" }) : "") +
+      cell("Calorías activas", nf.format(sum(w1.map(x => x.active_kcal))), delta(sum(w1.map(x => x.active_kcal)), sum(w0.map(x => x.active_kcal))));
 
-    // Sueño
-    const nights = (d.sleep || []).slice(-14);
+    // Sueño 14 noches
+    const color = st => (isDark() ? st.dark : st.light);
     if (nights.length) {
-      const avgH = nights.reduce((s, n) => s + n.hours, 0) / nights.length;
-      $("fx-sleep-sub").textContent = `Promedio de ${nf1.format(avgH)} h por noche`;
-      $("fx-sleep-legend").innerHTML = SLEEP.map(st => {
-        const v = nights.reduce((s, n) => s + (n[st.key] || 0), 0) / nights.length;
-        return `<li><i style="background:${isDark() ? st.dark : st.light}"></i>${st.name} <b>${nf1.format(v)} h</b></li>`;
-      }).join("");
+      $("fx-sleep-sub").textContent = `Prom. ${nf1.format(avgSleep)} h por noche`;
+      $("fx-sleep-legend").innerHTML = SLEEP.map(st => `<li><i style="background:${color(st)}"></i>${st.name} <b>${nf1.format(mean(nights.map(n => n[st.key] || 0)))} h</b></li>`).join("");
       stackedChart($("fx-sleep-chart"), nights, today.date);
     } else {
       $("fx-sleep-sub").textContent = ""; $("fx-sleep-legend").innerHTML = "";
       $("fx-sleep-chart").innerHTML = '<p class="fx-empty">Todavía no hay noches registradas.</p>';
     }
 
+    // Anoche: barra segmentada + detalle
+    const night = lastNight || nights[nights.length - 1];
+    if (night) {
+      const staged = SLEEP.reduce((s, st) => s + (night[st.key] || 0), 0);
+      $("fx-night-sub").textContent = night === lastNight ? "" : "Última noche registrada: " + fmtDay(night.date);
+      $("fx-night").innerHTML = `<p class="fx-night-total">${nf1.format(night.hours)} <small class="fx-kpi-note">h dormidas</small></p>` +
+        (staged > 0
+          ? `<div class="fx-seg" role="img" aria-label="Etapas del sueño">${SLEEP.map(st => night[st.key] ? `<span style="flex:${night[st.key]};background:${color(st)}" title="${st.name}"></span>` : "").join("")}</div>
+             <ul class="fx-seg-list">${SLEEP.map(st => `<li><i style="background:${color(st)}"></i>${st.name}<b>${nf1.format(night[st.key] || 0)} h</b><span>${Math.round(((night[st.key] || 0) / staged) * 100)}%</span></li>`).join("")}</ul>`
+          : '<p class="fx-empty">Tu reloj no informó las etapas de esta noche.</p>');
+    } else {
+      $("fx-night-sub").textContent = "";
+      $("fx-night").innerHTML = '<p class="fx-empty">Sin noches registradas.</p>';
+    }
+
+    // Pulso por día y en reposo
+    rangeChart($("fx-hr-chart"), days);
+    $("fx-rhr-sub").textContent = h.vo2max ? `VO₂ máx ${nf1.format(h.vo2max.value)} ml/kg/min · ${relDay(h.vo2max.date, today.date)}` : (rhrAvg ? `Prom. ${Math.round(rhrAvg)} bpm` : "");
+    lineChart($("fx-rhr-chart"), days, { value: x => x.resting_bpm, label: "Pulso en reposo por día", unit: "bpm" });
+
     // Entrenamientos
-    const ws = d.workouts || [];
-    $("fx-workouts").innerHTML = ws.length ? ws.slice(0, 12).map(w => {
-      const bits = [w.duration_min + " min"];
-      if (w.pace_min_km) bits.push(`${Math.floor(w.pace_min_km)}:${String(Math.round((w.pace_min_km % 1) * 60)).padStart(2, "0")} min/km`);
-      if (w.avg_bpm) bits.push(w.avg_bpm + " bpm prom.");
-      if (w.steps && !w.distance_km) bits.push(nf.format(w.steps) + " pasos");
-      const subj = w.name + (w.distance_km ? " · " + nf1.format(w.distance_km) + " km" : "") + (w.title && w.title !== w.name ? ` · “${w.title.replace(/[<>&]/g, "")}”` : "");
-      return `<li><div class="fx-workout"><span class="dot" aria-hidden="true"></span><span class="subj">${subj}</span><span class="tag">${relDay(w.date, today.date)}</span><span class="snip">${bits.join(" · ")}</span></div></li>`;
-    }).join("") : '<li><p class="fx-empty" style="padding:16px 18px;margin:0">Todavía no hay entrenamientos registrados.</p></li>';
+    const mins30 = sum(ws.filter(w => days.length && w.date >= days[0].date).map(w => w.duration_min));
+    $("fx-workouts-sub").textContent = ws.length ? `${ws.length} registrados · ${nf.format(mins30)} min en 30 días` : "";
+    $("fx-workouts").innerHTML = ws.length
+      ? `<thead><tr><th>Día</th><th>Actividad</th><th class="num">Duración</th><th class="num">Distancia</th><th class="num fx-hide-sm">Ritmo</th><th class="num fx-hide-sm">Pulso prom.</th></tr></thead><tbody>` +
+        ws.slice(0, 6).map(w => {
+          const title = w.title && w.title !== w.name ? `<span class="fx-wtitle">${w.title.replace(/[<>&"]/g, "")}</span>` : "";
+          return `<tr><td>${relDay(w.date, today.date)}</td><td class="fx-wname">${w.name}${title}</td><td class="num">${w.duration_min} min</td>` +
+            `<td class="num">${w.distance_km ? nf1.format(w.distance_km) + " km" : "—"}</td>` +
+            `<td class="num fx-hide-sm">${w.pace_min_km ? paceText(w.pace_min_km) + " /km" : "—"}</td>` +
+            `<td class="num fx-hide-sm">${w.avg_bpm ? w.avg_bpm + " bpm" : "—"}</td></tr>`;
+        }).join("") + "</tbody>"
+      : '<tbody><tr><td class="fx-empty" style="border:0">Todavía no hay entrenamientos registrados.</td></tr></tbody>';
+
+    // Mezcla por tipo (minutos en 30 días), una sola serie: un color
+    const byType = new Map();
+    ws.filter(w => days.length && w.date >= days[0].date).forEach(w => {
+      const t = byType.get(w.name) || { min: 0, n: 0 }; t.min += w.duration_min || 0; t.n++; byType.set(w.name, t);
+    });
+    const mix = [...byType.entries()].sort((a, b) => b[1].min - a[1].min).slice(0, 6);
+    const maxMin = mix.length ? mix[0][1].min : 1;
+    $("fx-mix").innerHTML = mix.length
+      ? `<ul class="fx-mix">${mix.map(([name, t]) => `<li><div class="fx-mix-row"><b>${name}</b><span>${nf.format(t.min)} min · ${t.n} ${t.n === 1 ? "vez" : "veces"}</span></div><div class="fx-mix-bar" style="width:${Math.max(2, (t.min / maxMin) * 100)}%"></div></li>`).join("")}</ul>`
+      : '<p class="fx-empty">Sin entrenamientos en los últimos 30 días.</p>';
 
     // Tabla
-    $("fx-table").innerHTML = "<thead><tr><th>Día</th><th>Pasos</th><th>Km</th><th>Kcal activas</th><th>Sueño (h)</th><th>Pulso reposo</th><th>Pulso prom.</th><th>Entrenamientos</th></tr></thead><tbody>" +
-      d.days.slice().reverse().map(x => `<tr><td>${fmtDay(x.date)}</td><td>${nf.format(x.steps)}</td><td>${nf1.format(x.distance_km)}</td><td>${nf.format(x.active_kcal)}</td><td>${x.sleep_h != null ? nf1.format(x.sleep_h) : "—"}</td><td>${x.resting_bpm ?? "—"}</td><td>${x.hr_avg ?? "—"}</td><td>${x.workouts || "—"}</td></tr>`).join("") + "</tbody>";
+    $("fx-table").innerHTML = "<thead><tr><th>Día</th><th>Pasos</th><th>Km</th><th>Kcal activas</th><th>Sueño (h)</th><th>Pulso reposo</th><th>Pulso prom.</th><th>Pulso mín–máx</th><th>Entrenamientos</th></tr></thead><tbody>" +
+      days.slice().reverse().map(x => `<tr><td>${fmtDay(x.date)}</td><td>${nf.format(x.steps)}</td><td>${nf1.format(x.distance_km)}</td><td>${nf.format(x.active_kcal)}</td><td>${x.sleep_h != null ? nf1.format(x.sleep_h) : "—"}</td><td>${x.resting_bpm ?? "—"}</td><td>${x.hr_avg ?? "—"}</td><td>${x.hr_min != null ? x.hr_min + "–" + x.hr_max : "—"}</td><td>${x.workouts || "—"}</td></tr>`).join("") + "</tbody>";
   }
 
   /* ---------- datos ---------- */
