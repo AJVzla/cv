@@ -258,6 +258,27 @@ const HEALTH_ENDPOINT = "https://cv-chat.anthonymasyrubi.workers.dev/health/summ
     fig.style.setProperty("--beat", (60 / Math.max(35, Math.min(200, h.last_bpm))).toFixed(3) + "s");
   }
 
+  // Algunas apps (por ejemplo Strava) guardan los entrenamientos sin tipo en Health Connect.
+  // Si el tipo es genérico, se deduce del nombre ("Morning Run" → Correr) y se calcula el ritmo.
+  const TYPE_FROM_TITLE = [
+    [/\b(run|running|jog|correr|carrera|trote)\b/i, "Correr", true],
+    [/\b(walk|walking|caminata|caminar|paseo)\b/i, "Caminata", true],
+    [/\b(hike|hiking|trek|trekking|senderismo)\b/i, "Trekking", true],
+    [/\b(ride|riding|cycling|bike|bici|ciclismo)\b/i, "Bici", false],
+    [/\b(swim|swimming|nataci[oó]n|nadar)\b/i, "Natación", false],
+    [/\b(yoga)\b/i, "Yoga", false],
+    [/\b(weight|weights|strength|gym|fuerza|pesas)\b/i, "Fuerza", false],
+  ];
+  function fixWorkout(w) {
+    if (w.type !== 0 || !w.title) return w;
+    const hit = TYPE_FROM_TITLE.find(([re]) => re.test(w.title));
+    if (!hit) return w;
+    const [, name, hasPace] = hit;
+    const pace = hasPace && !w.pace_min_km && w.distance_km > 0.3 && w.duration_min > 0
+      ? Math.round((w.duration_min / w.distance_km) * 100) / 100 : w.pace_min_km;
+    return { ...w, name, pace_min_km: pace };
+  }
+
   function paceText(p) { return `${Math.floor(p)}:${String(Math.round((p % 1) * 60)).padStart(2, "0")}`; }
 
   let DATA = null;
@@ -269,7 +290,7 @@ const HEALTH_ENDPOINT = "https://cv-chat.anthonymasyrubi.workers.dev/health/summ
     const past = days.slice(0, -1);                     // los 29 días anteriores a hoy
     const h = d.heart || {};
     const nights = (d.sleep || []).slice(-14);
-    const ws = d.workouts || [];
+    const ws = (d.workouts || []).map(fixWorkout);
 
     // Encabezado
     const minsAgo = d.updated_at ? Math.round((Date.now() - d.updated_at) / 60000) : null;
@@ -280,7 +301,8 @@ const HEALTH_ENDPOINT = "https://cv-chat.anthonymasyrubi.workers.dev/health/summ
     // Indicadores (hoy contra el promedio de los días anteriores)
     const avgSteps = mean(past.filter(x => x.steps > 0).map(x => x.steps));
     const pct = Math.min(100, Math.round((today.steps / STEP_GOAL) * 100));
-    kpi("kpi-steps", "Pasos hoy", nf.format(today.steps), `${pct}% de la meta`,
+    const noDataToday = today.steps === 0 && today.hr_avg == null && !today.distance_km;
+    kpi("kpi-steps", "Pasos hoy", noDataToday ? "—" : nf.format(today.steps), noDataToday ? "Sin datos de hoy todavía" : `${pct}% de la meta`,
       `<div class="fx-meter" role="img" aria-label="${pct}% de la meta de ${nf.format(STEP_GOAL)}"><i style="width:${pct}%"></i></div>`);
     kpi("kpi-distance", "Distancia hoy", nf1.format(today.distance_km) + " <small>km</small>",
       avgSteps ? `Prom. ${nf1.format(mean(past.filter(x => x.steps > 0).map(x => x.distance_km)))} km/día` : "");
