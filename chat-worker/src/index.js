@@ -95,13 +95,22 @@ async function repliesAfter(env, session, after) {
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 // Una llamada a un modelo. Lanza un error con .status y un mensaje corto y legible.
-async function callGemini(env, model, body) {
+async function callGemini(env, model, body, timeoutMs) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY },
-    body: JSON.stringify(body),
-  });
+  let res;
+  try {
+    res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+  } catch (e) {
+    const timedOut = e?.name === "TimeoutError" || e?.name === "AbortError";
+    const err = new Error(`${model}: ${timedOut ? `no respondió en ${Math.round(timeoutMs / 1000)} s` : "error de red"}`);
+    err.status = timedOut ? 504 : 502;
+    throw err;
+  }
   if (!res.ok) {
     const raw = await res.text().catch(() => "");
     let msg = raw;
@@ -117,8 +126,9 @@ async function callGemini(env, model, body) {
   return text;
 }
 
-// Prueba el modelo principal y, si está saturado o sin cupo, el de respaldo.
+// Prueba el modelo principal y, si está saturado, colgado o sin cupo, el de respaldo.
 // Los errores 500/503 (picos de demanda) se reintentan una vez con una pausa corta.
+// Todo tiene que terminar dentro de GEMINI_BUDGET_MS (25 s por defecto) para que el chat nunca quede esperando.
 async function askGemini(env, messages, lang) {
   const body = {
     system_instruction: {
@@ -129,18 +139,26 @@ async function askGemini(env, messages, lang) {
   };
   const models = [...new Set([env.GEMINI_MODEL || "gemini-flash-latest", env.GEMINI_FALLBACK_MODEL || "gemini-flash-lite-latest"])];
   const errors = [];
+  const budget = Number(env.GEMINI_BUDGET_MS || 25_000);
+  const perCall = Number(env.GEMINI_TIMEOUT_MS || 12_000);
+  const deadline = now() + budget;
+  const left = () => deadline - now();
+  outer:
   for (const model of models) {
     for (let attempt = 0; attempt < 2; attempt++) {
+      if (left() < 1_000) break outer;
       try {
-        return await callGemini(env, model, body);
+        return await callGemini(env, model, body, Math.min(perCall, left()));
       } catch (err) {
         errors.push(err);
         const transient = err.status === 500 || err.status === 503 || err.status === 502;
-        if (transient && attempt === 0) { await sleep(Number(env.RETRY_DELAY_MS ?? 700)); continue; }
-        break; // 429 (sin cupo), 4xx u otro: pasar al modelo siguiente
+        const delay = Number(env.RETRY_DELAY_MS ?? 700);
+        if (transient && attempt === 0 && left() > delay + 3_000) { await sleep(delay); continue; }
+        break; // colgado (504), sin cupo (429), 4xx u otro: pasar al modelo siguiente
       }
     }
   }
+  if (!errors.length) errors.push(Object.assign(new Error("sin tiempo para consultar a Gemini"), { status: 504 }));
   const last = errors[errors.length - 1];
   const err = new Error([...new Set(errors.map(e => e.message))].join(" | "));
   err.status = last?.status;
@@ -232,6 +250,18 @@ async function handleTelegram(request, env) {
 
 export default {
   async fetch(request, env, ctx) {
+    try {
+      return await route(request, env, ctx);
+    } catch (err) {
+      // Nunca devolver un error sin CORS: el chat no podría leerlo y mostraría "no pude enviar".
+      const cors = corsHeaders(request.headers.get("Origin") || "", env);
+      ctx.waitUntil(tg(env, "sendMessage", { chat_id: env.TELEGRAM_CHAT_ID, text: `⚠️ Error en el chat: ${String(err?.message || err).slice(0, 300)}` }).catch(() => {}));
+      return json({ reply: "No pude responder ahora, pero podés escribirme a ajmercato@gmail.com.", degraded: true }, 200, cors.headers);
+    }
+  },
+};
+
+async function route(request, env, ctx) {
     const url = new URL(request.url);
 
     if (url.pathname === "/telegram" && request.method === "POST") return handleTelegram(request, env);
@@ -251,7 +281,12 @@ export default {
 
     if (url.pathname !== "/chat" || request.method !== "POST") return json({ error: "not_found" }, 404, cors.headers);
     if (!cors.ok) return json({ error: "forbidden_origin" }, 403, cors.headers);
-    if (rateLimited(request.headers.get("CF-Connecting-IP") || "unknown")) return json({ error: "rate_limited" }, 429, cors.headers);
+    if (rateLimited(request.headers.get("CF-Connecting-IP") || "unknown")) {
+      const en = request.headers.get("Accept-Language")?.startsWith("en");
+      return json({ error: "rate_limited", reply: en
+        ? "You're sending messages very quickly. Wait a minute and try again."
+        : "Estás enviando mensajes muy seguido. Esperá un minuto y probá de nuevo." }, 429, cors.headers);
+    }
 
     const payload = await request.json().catch(() => null);
     const cleaned = payload && cleanMessages(payload.messages);
@@ -289,5 +324,4 @@ export default {
         : (busy ? "Hay muchas consultas en este momento. " : "") + "No pude responder ahora, pero tu mensaje me llegó. También podés escribirme a ajmercato@gmail.com.";
       return json({ reply, degraded: true }, 200, cors.headers);
     }
-  },
-};
+}

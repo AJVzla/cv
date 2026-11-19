@@ -20,6 +20,7 @@ const CHAT_ENDPOINT = "https://cv-chat.anthonymasyrubi.workers.dev/chat";
       placeholder: "Escribí tu consulta…", send: "Enviar", close: "Cerrar chat", unread: "mensajes nuevos de Anthony",
       offline: "El chat con IA todavía no está conectado. Escribime a ajmercato@gmail.com y te respondo personalmente.",
       error: "No pude enviar tu mensaje. Revisá tu conexión, o escribime a ajmercato@gmail.com.",
+      slow: "Está tardando más de lo normal. Tu mensaje igual me llegó; probá de nuevo en un rato o escribime a ajmercato@gmail.com.",
       suggest: ["¿Qué experiencia tenés con Salesforce Marketing Cloud?", "¿Buscás empleo o tomás freelance?", "¿Cómo te contacto?"],
     },
     en: {
@@ -32,6 +33,7 @@ const CHAT_ENDPOINT = "https://cv-chat.anthonymasyrubi.workers.dev/chat";
       placeholder: "Type your question…", send: "Send", close: "Close chat", unread: "new messages from Anthony",
       offline: "The AI chat isn't connected yet. Write to me at ajmercato@gmail.com and I'll answer personally.",
       error: "I couldn't send your message. Check your connection, or write to me at ajmercato@gmail.com.",
+      slow: "This is taking longer than usual. I still got your message; try again in a bit or write to me at ajmercato@gmail.com.",
       suggest: ["What's your Salesforce Marketing Cloud experience?", "Are you looking for a job or freelance work?", "How can I contact you?"],
     },
   };
@@ -155,16 +157,19 @@ const CHAT_ENDPOINT = "https://cv-chat.anthonymasyrubi.workers.dev/chat";
       await new Promise(r => setTimeout(r, 500));
       reply = t("offline");
     } else {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 40_000);
       try {
         const res = await fetch(CHAT_ENDPOINT, {
-          method: "POST", headers: { "Content-Type": "application/json" },
+          method: "POST", headers: { "Content-Type": "application/json" }, signal: ctrl.signal,
           body: JSON.stringify({ messages: messages.map(({ role, content }) => ({ role, content })), lang: lang(), session, page: location.pathname }),
         });
         const data = await res.json().catch(() => ({}));
-        human = !!data.human;
-        if (human) status = "sentHuman";
-        else reply = data.reply || t("error");
-      } catch (e) { reply = t("error"); }
+        if (data.human) { human = true; status = "sentHuman"; }
+        else { if (res.ok) human = false; reply = data.reply || t("error"); }
+      } catch (e) {
+        reply = e && e.name === "AbortError" ? t("slow") : t("error");
+      } finally { clearTimeout(timer); }
       startPolling();
     }
     if (reply) messages.push({ role: "assistant", content: reply });
