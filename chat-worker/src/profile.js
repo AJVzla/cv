@@ -31,6 +31,9 @@ HABILIDADES
 - IA aplicada: GitHub Copilot, Claude Code, Codex.
 - Herramientas: Git, GitHub, Jira, Figma, WordPress, Drupal, SQL (fundamentos), Photoshop, Premiere Pro.
 
+PROYECTOS PROPIOS
+- Little Bites (2026): sitio en React, Vite, Tailwind CSS, Framer Motion y Swiper para un emprendimiento de postres de Maracaibo. Catálogo por categorías, carrito que se guarda y pedido armado para WhatsApp, sin backend. Optimizó la carga en el celular de 8,6 MB a 0,7 MB. Caso: https://anthonymasyrubi.com/proyectos/little-bites/ · Código: https://github.com/AJVzla/littlebites
+
 EJEMPLO EN VIVO
 - Email de ejemplo maquetado 100 % en HTML (marca ficticia), compatible con Outlook, modo oscuro y celular: https://anthonymasyrubi.com/maquetacion-emails-html/ejemplo/
 
