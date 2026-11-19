@@ -17,3 +17,61 @@ CREATE TABLE IF NOT EXISTS replies (
 );
 
 CREATE INDEX IF NOT EXISTS idx_replies_session ON replies (session, id);
+
+-- ---------- Estado físico (Health Connect vía HC Webhook) ----------
+
+-- Pasos, distancia y calorías activas por intervalo (diario o por bloques).
+CREATE TABLE IF NOT EXISTS health_buckets (
+  type       TEXT    NOT NULL,       -- steps | distance | active_calories
+  start_time INTEGER NOT NULL,       -- ms
+  end_time   INTEGER NOT NULL,
+  value      REAL    NOT NULL,
+  PRIMARY KEY (type, start_time)
+);
+CREATE INDEX IF NOT EXISTS idx_health_buckets_end ON health_buckets (end_time);
+
+-- Pulso por bloques (se guardan 40 días).
+CREATE TABLE IF NOT EXISTS health_hr (
+  time INTEGER PRIMARY KEY,          -- ms, inicio del bloque
+  avg  REAL NOT NULL,
+  min  REAL NOT NULL,
+  max  REAL NOT NULL
+);
+
+-- Mediciones sueltas: pulso en reposo, VO2 máx.
+CREATE TABLE IF NOT EXISTS health_points (
+  type  TEXT    NOT NULL,            -- resting_hr | vo2max
+  time  INTEGER NOT NULL,
+  value REAL    NOT NULL,
+  id    TEXT,
+  PRIMARY KEY (type, time)
+);
+
+-- Sesiones de sueño (solo duraciones, la página no muestra horarios).
+CREATE TABLE IF NOT EXISTS health_sleep (
+  id         TEXT PRIMARY KEY,
+  end_time   INTEGER NOT NULL,
+  duration_s INTEGER NOT NULL,
+  light_s    INTEGER NOT NULL DEFAULT 0,
+  deep_s     INTEGER NOT NULL DEFAULT 0,
+  rem_s      INTEGER NOT NULL DEFAULT 0,
+  awake_s    INTEGER NOT NULL DEFAULT 0
+);
+
+-- Entrenamientos.
+CREATE TABLE IF NOT EXISTS health_exercise (
+  id         TEXT PRIMARY KEY,
+  type       INTEGER NOT NULL,
+  start_time INTEGER NOT NULL,
+  end_time   INTEGER NOT NULL,
+  duration_s INTEGER NOT NULL,
+  distance_m REAL,
+  steps      INTEGER,
+  title      TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_health_exercise_start ON health_exercise (start_time);
+
+CREATE TABLE IF NOT EXISTS health_meta (
+  key   TEXT PRIMARY KEY,
+  value TEXT
+);

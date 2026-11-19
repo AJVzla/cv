@@ -5,13 +5,16 @@
  *                      y se avisa a Anthony por Telegram.
  * GET  /chat/updates   El chat del sitio pregunta si Anthony respondió desde Telegram.
  * POST /telegram       Webhook de Telegram: las respuestas de Anthony a un aviso llegan acá.
+ * POST /health/ingest  La app HC Webhook manda los datos de Health Connect (ver health.js).
+ * GET  /health/summary La página /estado-fisico lee el resumen.
  *
  * Secretos (npx wrangler secret put ...):
- *   GEMINI_API_KEY, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, TELEGRAM_WEBHOOK_SECRET
+ *   GEMINI_API_KEY, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, TELEGRAM_WEBHOOK_SECRET, HEALTH_INGEST_KEY, HEALTH_VIEW_KEY
  * Variables (wrangler.toml): ALLOWED_ORIGINS, GEMINI_MODEL, HUMAN_MINUTES
  * Base de datos (wrangler.toml): DB  →  ver schema.sql
  */
 import { PROFILE, RULES } from "./profile.js";
+import { handleIngest, handleSummary } from "./health.js";
 
 const MAX_MESSAGES = 20;          // turnos de historial que se mandan a la IA
 const MAX_CHARS = 800;            // largo máximo de cada mensaje del visitante
@@ -34,7 +37,7 @@ function corsHeaders(origin, env) {
     headers: {
       "Access-Control-Allow-Origin": allowed.includes(origin) ? origin : allowed[0] || "",
       "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
       "Access-Control-Max-Age": "86400",
       "Vary": "Origin",
     },
@@ -265,9 +268,25 @@ async function route(request, env, ctx) {
     const url = new URL(request.url);
 
     if (url.pathname === "/telegram" && request.method === "POST") return handleTelegram(request, env);
+    if (url.pathname === "/health/ingest" && request.method === "POST") return handleIngest(request, env);
 
     const cors = corsHeaders(request.headers.get("Origin") || "", env);
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: cors.headers });
+
+    /* Página /estado-fisico */
+    if (url.pathname === "/health/summary" && request.method === "GET") {
+      const summaryHeaders = { ...cors.headers, "Cache-Control": "private, no-store" };
+      if (!cors.ok) return json({ error: "forbidden_origin" }, 403, summaryHeaders);
+      if (!env.HEALTH_VIEW_KEY || env.HEALTH_VIEW_KEY.length < 32) {
+        return json({ error: "view_auth_not_configured" }, 503, summaryHeaders);
+      }
+      const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+      if (rateLimited(`health:${ip}`)) return json({ error: "rate_limited" }, 429, summaryHeaders);
+      if (request.headers.get("Authorization") !== `Bearer ${env.HEALTH_VIEW_KEY}`) {
+        return json({ error: "unauthorized" }, 401, summaryHeaders);
+      }
+      return handleSummary(env, url.searchParams.get("lang") === "en" ? "en" : "es", summaryHeaders);
+    }
 
     /* El chat pregunta si respondiste desde Telegram */
     if (url.pathname === "/chat/updates" && request.method === "GET") {

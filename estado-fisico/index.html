@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es" data-mode="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estado físico | Anthony Mas y Rubi</title>
+<meta name="description" content="Panel privado de actividad y entrenamientos de Anthony Mas y Rubi.">
+<!-- Página escondida: no aparece en Google ni en el sitemap, y el CV no la enlaza. -->
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="theme-color" content="#2B36D9">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+
+<header class="bar">
+  <a class="brand" href="../" style="color:inherit;text-decoration:none">
+    <span class="mono" aria-hidden="true">AM</span>
+    <span>Anthony Mas y Rubi</span>
+    <span class="where">Buenos Aires</span>
+  </a>
+  <div class="controls">
+    <span class="seg-label" id="render-label">Ver como:</span>
+    <div class="seg seg-mode" role="group" aria-labelledby="render-label">
+      <button type="button" data-mode-btn="light" aria-pressed="true">Claro</button>
+      <button type="button" data-mode-btn="dark" aria-pressed="false">Oscuro</button>
+      <button type="button" data-mode-btn="outlook" aria-pressed="false">Outlook<span class="ol-year"> 2016</span></button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <article class="mail arrive fx">
+    <div class="outlook-banner" role="note">
+      Si tenés problemas para ver este mensaje, <a href="#" data-mode-link="light">hacé clic aquí para verlo en tu navegador</a>. Sí, también los gráficos sufren en Outlook.
+    </div>
+
+    <section class="headers" aria-label="Encabezado">
+      <div class="from-wrap">
+      <span class="avatar" role="img" aria-label="Foto de Anthony Mas y Rubi"></span>
+      <dl>
+        <div class="row"><dt>De</dt><dd>Reloj de Anthony &lt;sync@health-connect&gt;</dd></div>
+        <div class="row"><dt>Para</dt><dd>Quien tenga este link</dd></div>
+        <div class="row"><dt>Asunto</dt><dd class="subject"><span class="unread" aria-hidden="true"></span>Estado físico de hoy</dd></div>
+        <div class="row"><dt>Recibido</dt><dd id="fx-updated">Cargando…</dd></div>
+      </dl>
+      </div>
+      <p class="preheader">Actividad, entrenamientos, corazón y sueño. Se actualiza solo desde mi reloj.</p>
+    </section>
+
+    <div class="body">
+      <nav class="crumbs" aria-label="Ruta">
+        <ol><li><a href="../">CV</a></li><li aria-current="page">Estado físico</li></ol>
+      </nav>
+
+      <div class="fx-hero">
+        <div>
+          <h1 class="page-title">Estado físico</h1>
+          <p class="fx-lede">Panel privado con datos de mi reloj, sincronizados desde Health Connect. Sin horarios exactos de sueño.</p>
+        </div>
+        <figure class="fx-pulse" id="fx-pulse" aria-live="polite">
+          <svg class="fx-heart" viewBox="0 0 32 29" aria-hidden="true"><path d="M16 28.5S1.5 19.6 1.5 9.4A7.9 7.9 0 0 1 16 5.1a7.9 7.9 0 0 1 14.5 4.3C30.5 19.6 16 28.5 16 28.5Z"/></svg>
+          <figcaption>
+            <span class="fx-bpm"><span id="fx-bpm">—</span> <small>bpm</small></span>
+            <span class="fx-pulse-meta" id="fx-pulse-meta">Último pulso</span>
+          </figcaption>
+        </figure>
+      </div>
+
+      <p class="fx-status" id="fx-status" role="status">Cargando datos del reloj…</p>
+      <form class="fx-login" id="fx-login" hidden>
+        <label for="fx-password">Clave de acceso al panel privado</label>
+        <div class="fx-login-row">
+          <input id="fx-password" type="password" autocomplete="current-password" required>
+          <button class="btn btn-primary" type="submit">Ver mis datos</button>
+        </div>
+        <p class="fx-login-error" id="fx-login-error" role="alert" hidden></p>
+      </form>
+      <button class="btn btn-ghost fx-logout" id="fx-logout" type="button" hidden>Cerrar el panel</button>
+
+      <div id="fx-content" hidden>
+        <section class="block" aria-labelledby="fx-today-t">
+          <h2 id="fx-today-t">Hoy</h2>
+          <div class="fx-stats" id="fx-today"></div>
+        </section>
+
+        <section class="block" aria-labelledby="fx-steps-t">
+          <h2 id="fx-steps-t">Pasos, últimos 30 días</h2>
+          <p class="fx-sub" id="fx-steps-sub"></p>
+          <div class="fx-chart" id="fx-steps-chart"></div>
+        </section>
+
+        <section class="block" aria-labelledby="fx-heart-t">
+          <h2 id="fx-heart-t">Corazón</h2>
+          <div class="fx-stats" id="fx-heart-stats"></div>
+          <h3 class="fx-chart-title">Pulso en reposo, últimos 30 días</h3>
+          <div class="fx-chart" id="fx-rhr-chart"></div>
+        </section>
+
+        <section class="block" aria-labelledby="fx-sleep-t">
+          <h2 id="fx-sleep-t">Sueño, últimas 14 noches</h2>
+          <p class="fx-sub" id="fx-sleep-sub"></p>
+          <ul class="fx-legend" id="fx-sleep-legend"></ul>
+          <div class="fx-chart" id="fx-sleep-chart"></div>
+        </section>
+
+        <section class="block" aria-labelledby="fx-workouts-t">
+          <h2 id="fx-workouts-t">Entrenamientos</h2>
+          <ul class="inbox" id="fx-workouts"></ul>
+        </section>
+
+        <section class="block" aria-labelledby="fx-table-t">
+          <details class="fx-table-wrap">
+            <summary id="fx-table-t">Ver los datos en una tabla</summary>
+            <div class="fx-table-scroll"><table class="fx-table" id="fx-table"></table></div>
+          </details>
+        </section>
+      </div>
+
+      <footer class="signoff">
+        <p>Mantenete en movimiento,</p>
+        <div class="sig-wrap">
+          <span class="avatar" role="img" aria-label="Foto de Anthony Mas y Rubi"></span>
+          <div>
+            <p class="sig">Anthony Mas y Rubi</p>
+            <p class="sig-meta"><span>Web Developer</span><span class="sep"> · </span><span>Buenos Aires, Argentina</span></p>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <div class="mail-foot">
+      <p>Datos de Health Connect enviados por la app HC Webhook a mi servidor de Cloudflare. Esta página no aparece en Google. <a href="../">Volver al CV</a></p>
+    </div>
+  </article>
+</main>
+
+<div class="fx-tip" id="fx-tip" role="tooltip" hidden></div>
+
+<script src="../assets/mode.js"></script>
+<script src="../assets/estado-fisico.js"></script>
+</body>
+</html>

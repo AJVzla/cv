@@ -3,15 +3,19 @@ main = "src/index.js"
 compatibility_date = "2026-11-01"
 
 [vars]
-# Sitios que pueden usar el chat. Separalos con comas.
+# Sitios que pueden usar el chat y la página de estado físico. Separalos con comas.
 ALLOWED_ORIGINS = "https://anthonymasyrubi.com,https://www.anthonymasyrubi.com,https://ajvzla.github.io"
 # Modelo de Gemini. "gemini-flash-latest" apunta siempre al Flash vigente.
 GEMINI_MODEL = "gemini-flash-latest"
+# Modelo de respaldo si el principal está saturado o sin cupo.
+GEMINI_FALLBACK_MODEL = "gemini-flash-lite-latest"
 # Minutos que la IA queda en pausa después de que respondés vos desde Telegram.
 HUMAN_MINUTES = "30"
+# Zona horaria para contar los días en /estado-fisico (minutos respecto de UTC). Buenos Aires = -180.
+HEALTH_TZ_OFFSET_MIN = "-180"
 
-# Base de datos para tus respuestas desde Telegram.
-# Creala con: npx wrangler d1 create cv-chat  y pegá acá el database_id que te devuelve.
+# Base de datos (chat + estado físico). Las variables van ARRIBA de esta sección:
+# todo lo que esté debajo de [[d1_databases]] se toma como parte de la base, no como variable.
 [[d1_databases]]
 binding = "DB"
 database_name = "cv-chat"
@@ -22,5 +26,4 @@ database_id = "0080a4b4-69b0-42ea-89e4-6a0f384f4da6"
 #   npx wrangler secret put TELEGRAM_BOT_TOKEN
 #   npx wrangler secret put TELEGRAM_CHAT_ID
 #   npx wrangler secret put TELEGRAM_WEBHOOK_SECRET
-
-GEMINI_FALLBACK_MODEL = "gemini-flash-lite-latest"
+#   npx wrangler secret put HEALTH_INGEST_KEY

@@ -118,3 +118,64 @@ Hacé commit y probalo: escribí en el chat de tu sitio, te llega el aviso a Tel
 ## Privacidad
 
 En el plan gratuito, Google puede usar lo que se envía a Gemini para mejorar sus productos. El chat avisa que responde una IA, y cuando contestás vos, avisa que el visitante está hablando con vos.
+
+---
+
+# Estado físico (anthonymasyrubi.com/estado-fisico)
+
+La página privada muestra actividad, entrenamientos, corazón y sueño con los datos de tu reloj. El camino es:
+
+```
+Reloj → su app → Health Connect → app HC Webhook → Worker (/health/ingest) → D1 → página
+```
+
+El servidor **solo guarda** pasos, distancia, calorías activas, pulso, pulso en reposo, VO₂ máx, sueño y entrenamientos. Cualquier otro dato que mande la app (peso, presión, glucosa, etc.) se ignora. La página no muestra horarios de sueño. Además de no aparecer en Google (`noindex`, fuera del sitemap y sin links desde el CV), el resumen requiere una clave privada: `noindex` por sí solo no protege datos.
+
+## 1. Preparar el servidor
+
+Dentro de `chat-worker`:
+
+```bash
+# Tablas nuevas (no toca las del chat)
+npx wrangler d1 execute cv-chat --remote --file=schema.sql
+
+# Clave para que solo tu celular pueda mandar datos. Inventá una larga, por ejemplo: salud_7Qm2xP9kLw4T
+npx wrangler secret put HEALTH_INGEST_KEY
+
+# Clave aleatoria de al menos 32 caracteres para abrir la página privada; no la pongas en el código del sitio.
+npx wrangler secret put HEALTH_VIEW_KEY
+
+npx wrangler deploy
+```
+
+## 2. Revisar que tu reloj escriba en Health Connect
+
+En el celular: **Configuración → Health Connect → Datos y acceso**. Entrá en Pasos y en Frecuencia cardíaca y fijate que haya datos de hoy y que la app de tu reloj figure en **Fuentes de datos**. Si no aparecen, en la app de tu reloj buscá la opción de sincronizar con Health Connect y activala.
+
+## 3. Configurar HC Webhook
+
+1. Instalá **HC Webhook** desde Google Play: https://play.google.com/store/apps/details?id=com.hcwebhook.app
+2. Tocá **Grant Permissions** y dale acceso solo a: Pasos, Distancia, Calorías activas, Frecuencia cardíaca, Frecuencia cardíaca en reposo, VO₂ máx, Sueño y Ejercicio.
+3. En **Webhooks**, agregá uno:
+   - **URL:** `https://cv-chat.anthonymasyrubi.workers.dev/health/ingest`
+   - **Delivery format:** JSON
+   - **Custom header:** nombre `x-api-key`, valor = la clave que inventaste en el paso 1
+4. **Tipos de datos y resolución:**
+   - Pasos, Distancia y Calorías activas → **Daily**, con **Count overlapping apps once** activado, así no se suman dos veces si el celular y el reloj cuentan pasos a la vez.
+   - Frecuencia cardíaca → **5 minutes**. Alcanza para la página y deja todo liviano.
+5. **Sync mode:** Interval, **30 minutos**. Android no permite menos de 15.
+6. Tocá **Test** y después **Sync Now**. En **Webhook Log** tiene que aparecer un **200** con algo como `"ok":true,"stored":{...}`.
+7. En los ajustes del celular, sacá HC Webhook de la **optimización de batería**. Si no, Android puede frenar las sincronizaciones.
+
+## 4. Ver la página
+
+Abrí **anthonymasyrubi.com/estado-fisico/** e ingresá el valor que guardaste en `HEALTH_VIEW_KEY`. La clave solo se mantiene en memoria mientras la página está abierta; usa **Cerrar el panel** para ocultar los datos. Para ver el diseño con datos de ejemplo sin consultar el servidor, agregá `#demo` al final de la dirección.
+
+## Si algo no anda
+
+- **Webhook Log muestra 401:** la clave del encabezado `x-api-key` no coincide con `HEALTH_INGEST_KEY`.
+- **El panel no acepta la clave:** revisá `HEALTH_VIEW_KEY` con `npx wrangler secret list` y, si hace falta, configurala de nuevo con `npx wrangler secret put HEALTH_VIEW_KEY`.
+- **413:** llegaron demasiados datos juntos. Bajá la resolución del pulso a 5 minutos.
+- **La página dice "Todavía no llegaron datos":** todavía no hubo una sincronización exitosa. Tocá Sync Now en la app.
+- **Faltan pasos o sueño:** el reloj no los está escribiendo en Health Connect (ver paso 2).
+- **Cambiar la zona horaria:** los días se cuentan en hora de Buenos Aires (UTC-3). Para otra zona, agregá `HEALTH_TZ_OFFSET_MIN = "-180"` en `[vars]` de `wrangler.toml` con tu diferencia en minutos.
