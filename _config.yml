@@ -1,0 +1,4 @@
+# GitHub Pages: no publicar el código del servidor del chat
+exclude:
+  - chat-worker
+  - .gitignore

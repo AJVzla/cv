@@ -1,0 +1,9 @@
+# Dependencias y archivos locales del chat
+node_modules/
+.wrangler/
+.dev.vars
+.env
+
+# Sistema
+.DS_Store
+Thumbs.db
