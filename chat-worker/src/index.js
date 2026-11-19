@@ -92,9 +92,34 @@ async function repliesAfter(env, session, after) {
 
 /* ---------------- Gemini ---------------- */
 
-async function askGemini(env, messages, lang) {
-  const model = env.GEMINI_MODEL || "gemini-flash-latest";
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+// Una llamada a un modelo. Lanza un error con .status y un mensaje corto y legible.
+async function callGemini(env, model, body) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const raw = await res.text().catch(() => "");
+    let msg = raw;
+    try { msg = JSON.parse(raw)?.error?.message || raw; } catch {}
+    const err = new Error(`${model} ${res.status}: ${String(msg).replace(/\s+/g, " ").slice(0, 160)}`);
+    err.status = res.status;
+    throw err;
+  }
+  const data = await res.json();
+  const parts = data?.candidates?.[0]?.content?.parts || [];
+  const text = parts.filter(p => !p.thought && typeof p.text === "string").map(p => p.text).join("").trim();
+  if (!text) { const err = new Error(`${model}: respuesta vacía`); err.status = 502; throw err; }
+  return text;
+}
+
+// Prueba el modelo principal y, si está saturado o sin cupo, el de respaldo.
+// Los errores 500/503 (picos de demanda) se reintentan una vez con una pausa corta.
+async function askGemini(env, messages, lang) {
   const body = {
     system_instruction: {
       parts: [{ text: `${RULES}\nIdioma de la interfaz del visitante: ${lang === "en" ? "inglés" : "español"}.\n\nPERFIL\n${PROFILE}` }],
@@ -102,22 +127,24 @@ async function askGemini(env, messages, lang) {
     contents: messages.map(m => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] })),
     generationConfig: { temperature: 0.5, maxOutputTokens: 1024 },
   };
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) {
-    const detail = await res.text().catch(() => "");
-    const err = new Error(`Gemini ${res.status}: ${detail.slice(0, 300)}`);
-    err.status = res.status;
-    throw err;
+  const models = [...new Set([env.GEMINI_MODEL || "gemini-flash-latest", env.GEMINI_FALLBACK_MODEL || "gemini-flash-lite-latest"])];
+  const errors = [];
+  for (const model of models) {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        return await callGemini(env, model, body);
+      } catch (err) {
+        errors.push(err);
+        const transient = err.status === 500 || err.status === 503 || err.status === 502;
+        if (transient && attempt === 0) { await sleep(Number(env.RETRY_DELAY_MS ?? 700)); continue; }
+        break; // 429 (sin cupo), 4xx u otro: pasar al modelo siguiente
+      }
+    }
   }
-  const data = await res.json();
-  const parts = data?.candidates?.[0]?.content?.parts || [];
-  const text = parts.filter(p => !p.thought && typeof p.text === "string").map(p => p.text).join("").trim();
-  if (!text) throw new Error("Gemini devolvió una respuesta vacía");
-  return text;
+  const last = errors[errors.length - 1];
+  const err = new Error([...new Set(errors.map(e => e.message))].join(" | "));
+  err.status = last?.status;
+  throw err;
 }
 
 /* ---------------- Telegram ---------------- */
