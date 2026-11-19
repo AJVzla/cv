@@ -775,3 +775,36 @@ h1.page-title {
     content: attr(data-label) ": "; color: var(--muted); font-size: 13.5px; font-weight: 600;
   }
 }
+
+/* ---------- Visor del email de ejemplo ---------- */
+.ev { margin: 6px 0 8px; }
+.ev-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-bottom: 14px; }
+.ev-links { display: flex; gap: 16px; margin-left: auto; font-size: 14.5px; }
+.ev-stage {
+  border: 1px solid var(--line); border-radius: 16px; padding: 22px;
+  background: var(--paper); display: flex; justify-content: center;
+}
+.ev-stage[data-theme="dark"] { background: #0B0C10; }
+.ev-device { width: 100%; max-width: 640px; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: var(--shadow); }
+.ev-stage[data-theme="dark"] .ev-device { background: #121214; }
+.ev-chrome {
+  display: flex; align-items: center; gap: 10px; padding: 10px 14px; font-size: 13px;
+  background: #F1F2F5; color: #4A4F5C; border-bottom: 1px solid #E1E3E8; white-space: nowrap; overflow: hidden;
+}
+.ev-chrome::before { content: ""; flex: none; width: 42px; height: 10px; background: radial-gradient(circle, #E06C5F 4px, transparent 4.5px) 0 0 / 14px 10px repeat-x; opacity: .9; }
+.ev-stage[data-theme="dark"] .ev-chrome { background: #1E1F25; color: #A9ADBA; border-color: #2B2D35; }
+.ev-from { overflow: hidden; text-overflow: ellipsis; }
+.ev-device iframe { display: block; width: 100%; height: 900px; border: 0; background: transparent; }
+.ev-stage[data-view="mobile"] .ev-device { max-width: 375px; border-radius: 34px; border: 10px solid #15171C; }
+.ev-stage[data-view="mobile"] .ev-chrome { justify-content: center; }
+.ev-stage[data-view="mobile"] .ev-chrome::before { display: none; }
+.ev-note { margin: 10px 0 0; font-size: 14px; color: var(--muted); text-align: center; }
+.ev-honest { margin-top: 16px; color: var(--muted); font-size: 15px; }
+.prose code { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: .88em; background: var(--chip); padding: .1em .35em; border-radius: 5px; }
+[data-mode="outlook"] .ev-stage, [data-mode="outlook"] .ev-device { border-radius: 0; }
+@media (max-width: 640px) {
+  .ev-stage { padding: 10px; margin: 0 -8px; border-radius: 12px; }
+  .ev-links { margin-left: 0; width: 100%; }
+  .ev-stage[data-view="mobile"] .ev-device { border-width: 6px; border-radius: 26px; }
+}
+.ev-stage[data-view="mobile"] .ev-device iframe { height: 700px !important; }

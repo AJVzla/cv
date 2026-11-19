@@ -31,6 +31,9 @@ HABILIDADES
 - IA aplicada: GitHub Copilot, Claude Code, Codex.
 - Herramientas: Git, GitHub, Jira, Figma, WordPress, Drupal, SQL (fundamentos), Photoshop, Premiere Pro.
 
+EJEMPLO EN VIVO
+- Email de ejemplo maquetado 100 % en HTML (marca ficticia), compatible con Outlook, modo oscuro y celular: https://anthonymasyrubi.com/maquetacion-emails-html/ejemplo/
+
 NOTAS TÉCNICAS (en https://anthonymasyrubi.com/notas/)
 - "Por qué tu email se rompe en Outlook y cómo evitarlo": https://anthonymasyrubi.com/notas/emails-outlook/
 - "Modo oscuro en emails HTML": https://anthonymasyrubi.com/notas/emails-modo-oscuro/
