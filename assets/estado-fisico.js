@@ -424,7 +424,21 @@ const HEALTH_ENDPOINT = "https://cv-chat.anthonymasyrubi.workers.dev/health/summ
       heart: { last_bpm: 68, last_minutes_ago: 9, resting: { value: 57, date: days[29].date }, vo2max: { value: 46.3, date: days[27].date } } };
   }
 
-  let viewKey = "";
+  /* Clave del panel: se guarda en este navegador para que recargar no la pida de nuevo.
+     "Recordarme" la guarda hasta cerrar sesión (localStorage); si no, hasta cerrar la pestaña (sessionStorage). */
+  const KEY_NAME = "cv-health-view-key";
+  const keyStore = {
+    get() { try { return localStorage.getItem(KEY_NAME) || sessionStorage.getItem(KEY_NAME) || ""; } catch (e) { return ""; } },
+    set(v, remember) {
+      try {
+        (remember ? localStorage : sessionStorage).setItem(KEY_NAME, v);
+        (remember ? sessionStorage : localStorage).removeItem(KEY_NAME);
+      } catch (e) { /* sin almacenamiento: la clave dura hasta recargar */ }
+    },
+    clear() { try { localStorage.removeItem(KEY_NAME); sessionStorage.removeItem(KEY_NAME); } catch (e) {} },
+  };
+
+  let viewKey = keyStore.get();
   async function load() {
     const status = $("fx-status");
     const demo = location.hash === "#demo";
@@ -440,9 +454,17 @@ const HEALTH_ENDPOINT = "https://cv-chat.anthonymasyrubi.workers.dev/health/summ
         if (viewKey) headers.Authorization = "Bearer " + viewKey;
         const res = await fetch(HEALTH_ENDPOINT, { headers, cache: "no-store" });
         if (res.status === 401) {
-          status.textContent = "Este panel es privado. Ingresá tu clave de acceso.";
+          const hadSaved = !!keyStore.get();
+          if (hadSaved) { keyStore.clear(); viewKey = ""; }
+          status.textContent = hadSaved
+            ? "La clave guardada ya no sirve (puede que la hayas cambiado). Ingresala de nuevo."
+            : "Este panel es privado. Ingresá tu clave de acceso.";
           $("fx-login").hidden = false;
           $("fx-logout").hidden = true;
+          return false;
+        }
+        if (res.status === 429) {
+          status.textContent = "Demasiados intentos seguidos. Esperá un minuto y recargá la página.";
           return false;
         }
         if (res.status === 503) {
@@ -478,7 +500,7 @@ const HEALTH_ENDPOINT = "https://cv-chat.anthonymasyrubi.workers.dev/health/summ
     const button = $("fx-login").querySelector("button");
     button.disabled = true;
     try {
-      if (await load()) input.value = "";
+      if (await load()) { keyStore.set(viewKey, $("fx-remember").checked); input.value = ""; }
       else if (viewKey) {
         viewKey = "";
         error.textContent = "No se pudo abrir el panel. Revisá la clave e intentá de nuevo.";
@@ -491,6 +513,7 @@ const HEALTH_ENDPOINT = "https://cv-chat.anthonymasyrubi.workers.dev/health/summ
   });
   $("fx-logout").addEventListener("click", () => {
     viewKey = "";
+    keyStore.clear();
     DATA = null;
     $("fx-content").hidden = true;
     $("fx-logout").hidden = true;
