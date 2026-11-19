@@ -7,6 +7,8 @@
  * POST /telegram       Webhook de Telegram: las respuestas de Anthony a un aviso llegan acá.
  * POST /health/ingest  La app HC Webhook manda los datos de Health Connect (ver health.js).
  * GET  /health/summary La página /estado-fisico lee el resumen.
+ * POST /event          El sitio avisa una descarga del PDF (se cuenta y te llega a Telegram).
+ *                      En Telegram, /stats muestra descargas y conversaciones de los últimos días.
  *
  * Secretos (npx wrangler secret put ...):
  *   GEMINI_API_KEY, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, TELEGRAM_WEBHOOK_SECRET, HEALTH_INGEST_KEY, HEALTH_VIEW_KEY
@@ -15,6 +17,7 @@
  */
 import { PROFILE, RULES } from "./profile.js";
 import { handleIngest, handleSummary } from "./health.js";
+import { EVENT_TYPES, countEvent, statsText } from "./stats.js";
 
 const MAX_MESSAGES = 20;          // turnos de historial que se mandan a la IA
 const MAX_CHARS = 800;            // largo máximo de cada mensaje del visitante
@@ -221,12 +224,19 @@ async function handleTelegram(request, env) {
     return new Response("ok");
   }
 
+  const command = msg.text.trim().split(/[\s@]/)[0];
+  if (command === "/stats") {
+    const text = await statsText(env).catch(err => `⚠️ No pude leer las métricas: ${String(err?.message || err).slice(0, 200)}`);
+    await tg(env, "sendMessage", { chat_id: env.TELEGRAM_CHAT_ID, text, parse_mode: "HTML" });
+    return new Response("ok");
+  }
+
   const replyTo = msg.reply_to_message;
   const tag = replyTo && (replyTo.text || replyTo.caption || "").match(TAG_RE);
   if (!tag) {
     await tg(env, "sendMessage", {
       chat_id: env.TELEGRAM_CHAT_ID,
-      text: "Para contestarle a un visitante, respondé (Reply) al aviso de su mensaje.\nPara que vuelva a responder la IA, respondé /ia a un aviso.",
+      text: "Para contestarle a un visitante, respondé (Reply) al aviso de su mensaje.\nPara que vuelva a responder la IA, respondé /ia a un aviso.\nPara ver descargas del PDF y conversaciones, mandá /stats.",
     });
     return new Response("ok");
   }
@@ -288,6 +298,32 @@ async function route(request, env, ctx) {
       return handleSummary(env, url.searchParams.get("lang") === "en" ? "en" : "es", summaryHeaders);
     }
 
+    /* Eventos del sitio (descarga del PDF) */
+    if (url.pathname === "/event" && request.method === "POST") {
+      if (!cors.ok) return json({ error: "forbidden_origin" }, 403, cors.headers);
+      const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+      if (rateLimited(`event:${ip}`)) return json({ error: "rate_limited" }, 429, cors.headers);
+      const raw = await request.text().catch(() => "");
+      let data = null;
+      try { data = raw.length <= 1000 ? JSON.parse(raw) : null; } catch (e) {}
+      const type = data && typeof data.type === "string" ? data.type : "";
+      if (!(type in EVENT_TYPES)) return json({ error: "bad_request" }, 400, cors.headers);
+      const lang = data.lang === "en" ? "en" : "es";
+      const page = String(data.page || "/").slice(0, 80);
+      ctx.waitUntil((async () => {
+        await countEvent(env, type, lang).catch(() => {});
+        if (env.TELEGRAM_CHAT_ID) {
+          await tg(env, "sendMessage", {
+            chat_id: env.TELEGRAM_CHAT_ID,
+            text: `${EVENT_TYPES[type]} · ${lang.toUpperCase()} · ${esc(page)}`,
+            parse_mode: "HTML",
+            disable_notification: true,
+          });
+        }
+      })());
+      return new Response(null, { status: 204, headers: cors.headers });
+    }
+
     /* El chat pregunta si respondiste desde Telegram */
     if (url.pathname === "/chat/updates" && request.method === "GET") {
       if (!cors.ok) return json({ error: "forbidden_origin" }, 403, cors.headers);
@@ -317,6 +353,7 @@ async function route(request, env, ctx) {
     const page = String(payload.page || "/").slice(0, 80);
     const question = messages[messages.length - 1].content;
     const info = { session, page, lang, question, turn };
+    if (turn === 1) ctx.waitUntil(countEvent(env, "chat", lang).catch(() => {}));
 
     // Si estás respondiendo vos, la IA no contesta: solo te llega el aviso.
     if (await humanActive(env, session)) {

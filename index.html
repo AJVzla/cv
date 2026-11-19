@@ -93,6 +93,8 @@
     "Tailwind CSS",
     "WordPress",
     "Drupal",
+    "Banners digitales",
+    "Pixel perfect",
     "Litmus",
     "Email on Acid",
     "GitHub Copilot"
@@ -148,6 +150,7 @@
     </section>
 
     <div class="body">
+      <p class="status-pill"><span class="pulse" aria-hidden="true"></span><span data-i18n="status">Abierto a nuevas oportunidades<span class="pill-extra"> y proyectos freelance</span></span></p>
       <p class="hello" data-i18n="hello">Hola, soy</p>
       <h1 class="name"><span>Anthony</span> <span class="last">Mas y Rubi</span></h1>
 
@@ -158,9 +161,13 @@
           <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6.5 3.5 2 8l4.5 4.5M2.5 8H10a4 4 0 0 1 4 4v.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <span data-i18n="reply">Responder</span>
         </a>
-        <button class="btn btn-ghost" type="button" id="copy-email">
+        <a class="btn btn-ghost" id="book-call" href="mailto:ajmercato@gmail.com?subject=Coordinemos%20una%20llamada&amp;body=Hola%20Anthony%2C%20%C2%BFten%C3%A9s%20un%20rato%20para%20una%20llamada%3F%20Estos%20horarios%20me%20quedan%20bien%3A%20">
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="2.5" y="3.5" width="11" height="10" rx="1.6" stroke="currentColor" stroke-width="1.5"/><path d="M2.5 6.8h11M5.5 2v3M10.5 2v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span data-i18n="call">Agendar llamada</span>
+        </a>
+        <button class="btn btn-ghost btn-icon" type="button" id="copy-email" title="Copiar email">
           <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="5" y="5" width="8.5" height="8.5" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M3 10.5V3.8C3 3.3 3.3 3 3.8 3h6.7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-          <span data-i18n="copy">Copiar email</span>
+          <span class="btn-label" data-i18n="copy">Copiar email</span>
         </button>
         <button class="btn btn-ghost" type="button" id="download-pdf">
           <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2.5v8M4.5 7 8 10.5 11.5 7M3 13.5h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -195,6 +202,32 @@
         </ul>
       </section>
 
+      <section class="block" aria-labelledby="s-notes">
+        <h2 id="s-notes" data-i18n="notesTitle">Notas técnicas</h2>
+        <p class="inbox-intro" data-i18n="notesIntro">Lo que aprendí resolviendo problemas reales de email y Marketing Cloud.</p>
+        <ul class="inbox">
+          <li><a href="notas/emails-outlook/">
+            <span class="dot read" aria-hidden="true"></span>
+            <span class="subj">Por qué tu email se rompe en Outlook y cómo evitarlo</span>
+            <span class="tag">Email</span>
+            <span class="snip">Tablas, anchos en atributos, código condicional y botones que Outlook respeta.</span>
+          </a></li>
+          <li><a href="notas/emails-modo-oscuro/">
+            <span class="dot read" aria-hidden="true"></span>
+            <span class="subj">Modo oscuro en emails HTML: cómo prepararte para cada cliente</span>
+            <span class="tag">Email</span>
+            <span class="snip">Qué invierte cada cliente de correo y qué podés controlar con CSS.</span>
+          </a></li>
+          <li><a href="notas/ampscript-basico/">
+            <span class="dot read" aria-hidden="true"></span>
+            <span class="subj">AMPscript para empezar: personalizar un email con una Data Extension</span>
+            <span class="tag">SFMC</span>
+            <span class="snip">Variables, valores por defecto, Lookup y bucles con LookupRows.</span>
+          </a></li>
+        </ul>
+        <p class="more-link"><a href="notas/" data-i18n="notesAll">Ver todas las notas</a></p>
+      </section>
+
       <section class="block" aria-labelledby="s-skills">
         <h2 id="s-skills" data-i18n="skillsTitle">Con qué trabajo</h2>
         <div class="skills">
@@ -202,14 +235,14 @@
             <h3>Frontend</h3>
             <ul class="chips">
               <li class="key">HTML5</li><li class="key">JavaScript</li><li class="key">Sass / SCSS</li><li>Tailwind CSS</li><li>React.js</li>
-              <li data-i18n="sk-responsive">Diseño responsive</li><li data-i18n="sk-components">Componentes reutilizables</li>
+              <li data-i18n="sk-pixel">Pixel perfect</li><li data-i18n="sk-responsive">Diseño responsive</li><li data-i18n="sk-components">Componentes reutilizables</li>
             </ul>
           </div>
           <div class="skill-row">
             <h3>Marketing tech</h3>
             <ul class="chips">
               <li class="key">Salesforce Marketing Cloud</li><li>AMPscript</li><li>CloudPages</li><li>Data Extensions</li>
-              <li>Adobe Journey Optimizer</li><li class="key">Adobe Experience Manager</li>
+              <li>Adobe Journey Optimizer</li><li class="key">Adobe Experience Manager</li><li data-i18n="sk-banners">Banners y resizing</li>
             </ul>
           </div>
           <div class="skill-row">
@@ -264,6 +297,13 @@
                 <li data-i18n="m5">Desarrollo componentes e interfaces en React para aplicaciones web y experiencias digitales.</li>
                 <li data-i18n="m6">Creo componentes y templates reutilizables que hacen el trabajo más consistente y fácil de mantener.</li>
                 <li data-i18n="m7">Mantengo y actualizo sitios en Drupal y WordPress.</li>
+              </ul>
+            </div>
+            <div class="group">
+              <h4 data-i18n="g-banners">Banners y piezas digitales</h4>
+              <ul>
+                <li data-i18n="m11">Produzco banners para campañas digitales y los adapto a todos los formatos y medidas que pide cada medio (resizing).</li>
+                <li data-i18n="m12">Maqueto en pixel perfect: lo que se publica coincide al píxel con el diseño aprobado.</li>
               </ul>
             </div>
             <div class="group">
@@ -349,6 +389,14 @@
     LinkedIn: "https://www.linkedin.com/in/anthony-mas-y-rubi/",
     GitHub: "https://github.com/AJVzla"
   };
+  /* Link para agendar llamadas (Calendly o la página de citas de Google Calendar).
+     Mientras esté vacío, el botón "Agendar una llamada" abre un email. */
+  const CALL_URL = "";
+  if (CALL_URL) {
+    const call = document.getElementById("book-call");
+    call.href = CALL_URL; call.target = "_blank"; call.rel = "noopener";
+  }
+
   /* URL pública de esta página, para que aparezca en el PDF. */
   const SITE_URL = "https://anthonymasyrubi.com/";
 
@@ -363,12 +411,15 @@
     preheader: "React, HTML, CSS and Salesforce Marketing Cloud. Tested in Outlook and dark mode.",
     hello: "Hi, I'm",
     lede: "Web developer specialized in <strong>marketing technology</strong>. I build websites, web apps, CloudPages and email campaigns for international teams at OMC, from implementation to delivery.",
+    status: 'Open to new roles<span class="pill-extra"> and freelance projects</span>', call: "Book a call",
     reply: "Reply", copy: "Copy email", pdf: "Download CV (PDF)",
     specTitle: "Specialties", specIntro: "Three more messages in this inbox, one for each thing I do. (Pages in Spanish.)",
     spec1: "HTML email development for Outlook, Gmail and dark mode", spec1s: "Templates from scratch, Outlook conditional code and testing in Litmus and Email on Acid.",
     spec2: "Salesforce Marketing Cloud development: AMPscript and CloudPages", spec2s: "Dynamic emails, CloudPages forms and well-organized Data Extensions.",
     spec3: "Web development with React, WordPress and Drupal", spec3s: "Campaign landing pages, reusable components and sites that are easy to maintain.",
+    notesTitle: "Technical notes", notesIntro: "What I've learned solving real email and Marketing Cloud problems. (Notes in Spanish.)", notesAll: "See all notes",
     skillsTitle: "What I work with",
+    "sk-pixel": "Pixel perfect", "sk-banners": "Banners and resizing",
     "sk-responsive": "Responsive design", "sk-components": "Reusable components",
     "sk-emailTitle": "Email", "sk-email1": "HTML templates from scratch", "sk-email2": "Outlook compatibility",
     "sk-email3": "Dark mode support", "sk-email4": "Cross-client testing",
@@ -376,7 +427,7 @@
     "sk-toolsTitle": "Tools", "sk-sql": "SQL (fundamentals)",
     expTitle: "Where I've worked",
     mccannDates: "Oct 2022 – present", current: "Current",
-    "g-email": "Email and campaigns", "g-data": "CloudPages and data", "g-web": "Web and React", "g-how": "How I work",
+    "g-email": "Email and campaigns", "g-data": "CloudPages and data", "g-web": "Web and React", "g-banners": "Banners and digital assets", "g-how": "How I work",
     m1: "Build HTML and CSS email templates from scratch, validated in Outlook, dark mode and major email clients.",
     m2: "Build and maintain dynamic campaigns in Salesforce Marketing Cloud with AMPscript.",
     m3: "Build CloudPages with custom forms, business logic and Data Extension integrations.",
@@ -386,6 +437,8 @@
     m7: "Maintain and update Drupal and WordPress sites.",
     m8: "Take each task end to end against functional and technical requirements, alongside teams in other countries.",
     m9: "Version control with Git and GitHub, manual testing and cross-platform validation.",
+    m11: "Produce banners for digital campaigns and adapt them to every format and size each media outlet requires (resizing).",
+    m12: "Build pixel perfect: what goes live matches the approved design down to the pixel.",
     m10: "Use GitHub Copilot to generate and review code, and to speed up building email templates and AMPscript logic.",
     synDates: "May 2019 – Oct 2021",
     s1: "Built websites, landing pages and newsletters with WordPress, React.js, HTML, CSS and JavaScript.",
@@ -489,7 +542,7 @@
     await loadJsPDF();
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ unit: "mm", format: "a4" });
-    const W = 210, H = 297, M = 16, CW = W - M * 2;
+    const W = 210, H = 297, M = 14, CW = W - M * 2;
     const INK = [27, 33, 48], MUTED = [93, 100, 115], ACC = [43, 54, 217], LINE = [211, 215, 207];
     const PT = 0.3528;
     let y = M;
@@ -504,14 +557,14 @@
       const step = size * PT * lh;
       ls.forEach(l => { ensure(step); doc.text(l, x, y + size * PT * .82); y += step; });
     };
-    const bullet = (text, x, width, size = 9.2) => {
+    const bullet = (text, x, width, size = 8.9) => {
       font(size, "normal", INK);
       const ls = doc.splitTextToSize(text, width - 3.5);
       const step = size * PT * 1.3;
       ensure(step);
       doc.text("•", x, y + size * PT * .82);
       ls.forEach(l => { ensure(step); doc.text(l, x + 3.5, y + size * PT * .82); y += step; });
-      y += .6;
+      y += .4;
     };
     const heading = title => {
       ensure(14);
@@ -595,8 +648,13 @@
     /* Formación e idiomas, en dos columnas */
     const eduTitles = eduSec.querySelectorAll("h2");
     const GAP = 10, colW = (CW - GAP) / 2, colX = [M, M + colW + GAP];
-    ensure(30);
-    y += 2.5;
+    /* Alto exacto del bloque, para no cortarlo entre páginas */
+    const hOf = (text, size, style) => { font(size, style); return doc.splitTextToSize(text, colW).length * size * PT * 1.32; };
+    const factH = f => hOf(txt("h3", f), 9.6, "bold") + hOf(f.querySelector("p").innerText.split("\n").map(clean).filter(Boolean).join(" · "), 8.8, "normal") + 1.2;
+    const langH = l => hOf(txt("h3", l), 9.6, "bold") + hOf(txt("small", l), 8.8, "normal") + 1.2;
+    const sum = (list, fn) => [...list].reduce((a, el) => a + fn(el), 0);
+    ensure(2 + 11.5 * PT * 1.25 + 3 + Math.max(sum(eduSec.querySelectorAll(".fact"), factH), sum(eduSec.querySelectorAll(".lang"), langH)));
+    y += 2;
     const topY = y;
     [0, 1].forEach(i => {
       font(11.5, "bold", ACC);
@@ -637,6 +695,7 @@
     const en = lang === "en";
     const filename = "Anthony_Mas_y_Rubi_CV_" + (en ? "EN" : "ES") + ".pdf";
     t.textContent = en ? "Generating PDF…" : "Generando el PDF…";
+    if (window.cvTrack) window.cvTrack("pdf", lang);
     let blob;
     try { blob = await buildPdf(); }
     catch (e) { t.textContent = en ? "Couldn't generate the PDF. Check your connection and try again." : "No se pudo generar el PDF. Revisá tu conexión y probá de nuevo."; return; }
@@ -658,6 +717,7 @@
     t.textContent = en ? "CV downloaded." : "CV descargado.";
   });
 </script>
+<script src="assets/analytics.js" defer></script>
 <script src="assets/chat.js" defer></script>
 </body>
 </html>
