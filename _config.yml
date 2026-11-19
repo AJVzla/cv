@@ -2,3 +2,4 @@
 exclude:
   - chat-worker
   - .gitignore
+  - _herramientas
