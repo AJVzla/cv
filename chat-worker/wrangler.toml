@@ -7,7 +7,6 @@ compatibility_date = "2026-11-01"
 ALLOWED_ORIGINS = "https://anthonymasyrubi.com,https://www.anthonymasyrubi.com,https://ajvzla.github.io"
 # Modelo de Gemini. "gemini-flash-latest" apunta siempre al Flash vigente.
 GEMINI_MODEL = "gemini-flash-latest"
-GEMINI_FALLBACK_MODEL = "gemini-flash-lite-latest"
 # Minutos que la IA queda en pausa después de que respondés vos desde Telegram.
 HUMAN_MINUTES = "30"
 
@@ -23,3 +22,5 @@ database_id = "0080a4b4-69b0-42ea-89e4-6a0f384f4da6"
 #   npx wrangler secret put TELEGRAM_BOT_TOKEN
 #   npx wrangler secret put TELEGRAM_CHAT_ID
 #   npx wrangler secret put TELEGRAM_WEBHOOK_SECRET
+
+GEMINI_FALLBACK_MODEL = "gemini-flash-lite-latest"
