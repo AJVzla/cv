@@ -39,10 +39,10 @@
         <ol><li><a href="../">CV</a></li><li aria-current="page">Estado físico</li></ol>
       </nav>
       <h1 class="fx-title">Estado físico</h1>
-      <p class="fx-meta"><span class="fx-live" aria-hidden="true"></span><span id="fx-updated">Panel privado</span><span class="fx-meta-sep" aria-hidden="true"> · </span><span>Datos de mi reloj vía Health Connect</span></p>
+      <p class="fx-meta"><span class="fx-live is-stale" aria-hidden="true"></span><span id="fx-updated">Panel privado</span><span class="fx-meta-sep" aria-hidden="true"> · </span><span>Datos de mi reloj vía Health Connect</span></p>
     </div>
     <div class="fx-top-actions">
-      <button class="btn btn-ghost fx-logout" id="fx-logout" type="button" hidden>Cerrar el panel</button>
+      <button class="btn btn-ghost fx-logout" id="fx-logout" type="button" hidden>Cerrar sesión</button>
     </div>
   </header>
 
@@ -54,6 +54,7 @@
       <input id="fx-password" type="password" autocomplete="current-password" required>
       <button class="btn btn-primary" type="submit">Ver mis datos</button>
     </div>
+    <label class="fx-remember"><input type="checkbox" id="fx-remember" checked> Recordarme en este dispositivo</label>
     <p class="fx-login-error" id="fx-login-error" role="alert" hidden></p>
   </form>
 
