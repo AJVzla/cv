@@ -808,3 +808,30 @@ h1.page-title {
   .ev-stage[data-view="mobile"] .ev-device { border-width: 6px; border-radius: 26px; }
 }
 .ev-stage[data-view="mobile"] .ev-device iframe { height: 700px !important; }
+
+/* ---------- Proyectos ---------- */
+.case-facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 4px 0 30px; padding: 16px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.case-facts dt { font-size: 13px; color: var(--muted); margin-bottom: 3px; }
+.case-facts dd { margin: 0; font-size: 15px; font-weight: 500; line-height: 1.4; }
+.sv-stage { border: 1px solid var(--line); border-radius: 16px; padding: 22px; background: var(--paper); display: flex; justify-content: center; overflow: hidden; }
+.sv-device { background: #fff; border-radius: 10px; overflow: hidden; box-shadow: var(--shadow); max-width: 100%; }
+.sv-viewport { position: relative; overflow: hidden; background: #fdf5e6; }
+.sv-viewport iframe { position: absolute; top: 0; left: 0; border: 0; transform-origin: 0 0; background: #fdf5e6; }
+.sv-stage[data-view="mobile"] .sv-device, .sv-stage[data-view="tablet"] .sv-device { border: 10px solid #15171C; border-radius: 34px; box-sizing: border-box; }
+.sv-stage[data-view="tablet"] .sv-device { border-radius: 26px; }
+.sv-stage:not([data-view="desktop"]) .ev-chrome { display: none; }
+.prose-p { margin: 0 0 18px; max-width: 38em; }
+.perf { max-width: 520px; }
+.perf-row { display: grid; grid-template-columns: 74px 1fr 64px; align-items: center; gap: 12px; margin-bottom: 10px; font-size: 15px; }
+.perf-label { color: var(--muted); }
+.perf-bar { height: 14px; background: var(--chip); border-radius: 4px; overflow: hidden; }
+.perf-bar i { display: block; height: 100%; background: var(--muted); border-radius: 4px; }
+.perf-row.is-after .perf-bar i { background: var(--accent); }
+.perf-val { font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+.perf-cap { margin: 4px 0 0; font-size: 13.5px; color: var(--muted); }
+[data-mode="outlook"] .sv-stage, [data-mode="outlook"] .sv-device, [data-mode="outlook"] .perf-bar, [data-mode="outlook"] .perf-bar i { border-radius: 0; }
+@media (max-width: 640px) {
+  .case-facts { grid-template-columns: 1fr 1fr; }
+  .sv-stage { padding: 10px; margin: 0 -8px; border-radius: 12px; }
+  .sv-stage[data-view="mobile"] .sv-device, .sv-stage[data-view="tablet"] .sv-device { border-width: 6px; border-radius: 24px; }
+}
