@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es" data-mode="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Por qué tu email se rompe en Outlook y cómo evitarlo | Anthony Mas y Rubi</title>
+<meta name="description" content="Guía práctica para maquetar emails HTML que se vean bien en Outlook para Windows: tablas, anchos en atributos, código condicional MSO, botones y escalado de DPI.">
+<link rel="canonical" href="https://anthonymasyrubi.com/notas/emails-outlook/">
+<meta name="author" content="Anthony Mas y Rubi">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#2B36D9">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Anthony Mas y Rubi">
+<meta property="og:locale" content="es_AR">
+<meta property="og:title" content="Por qué tu email se rompe en Outlook y cómo evitarlo">
+<meta property="og:description" content="Guía práctica para maquetar emails HTML que se vean bien en Outlook para Windows: tablas, anchos en atributos, código condicional MSO, botones y escalado de DPI.">
+<meta property="og:url" content="https://anthonymasyrubi.com/notas/emails-outlook/">
+<meta property="og:image" content="https://anthonymasyrubi.com/assets/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "TechArticle",
+   "@id": "https://anthonymasyrubi.com/notas/emails-outlook/#article",
+   "headline": "Por qué tu email se rompe en Outlook y cómo evitarlo",
+   "description": "Guía práctica para maquetar emails HTML que se vean bien en Outlook para Windows: tablas, anchos en atributos, código condicional MSO, botones y escalado de DPI.",
+   "url": "https://anthonymasyrubi.com/notas/emails-outlook/",
+   "mainEntityOfPage": "https://anthonymasyrubi.com/notas/emails-outlook/",
+   "inLanguage": "es",
+   "datePublished": "2026-11-19",
+   "dateModified": "2026-11-19",
+   "image": "https://anthonymasyrubi.com/assets/og-image.jpg",
+   "author": {
+    "@id": "https://anthonymasyrubi.com/#person"
+   },
+   "publisher": {
+    "@id": "https://anthonymasyrubi.com/#person"
+   },
+   "isPartOf": {
+    "@id": "https://anthonymasyrubi.com/notas/#blog"
+   },
+   "timeRequired": "PT4M"
+  },
+  {
+   "@type": "BreadcrumbList",
+   "@id": "https://anthonymasyrubi.com/notas/emails-outlook/#breadcrumb",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "Inicio",
+     "item": "https://anthonymasyrubi.com/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "Notas",
+     "item": "https://anthonymasyrubi.com/notas/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 3,
+     "name": "Emails en Outlook",
+     "item": "https://anthonymasyrubi.com/notas/emails-outlook/"
+    }
+   ]
+  },
+  {
+   "@type": "Person",
+   "@id": "https://anthonymasyrubi.com/#person",
+   "name": "Anthony Mas y Rubi",
+   "url": "https://anthonymasyrubi.com/",
+   "jobTitle": "Web Developer",
+   "sameAs": [
+    "https://www.linkedin.com/in/anthony-mas-y-rubi/",
+    "https://github.com/AJVzla"
+   ]
+  }
+ ]
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+
+<header class="bar">
+  <a class="brand" href="../../" style="color:inherit;text-decoration:none">
+    <span class="mono" aria-hidden="true">AM</span>
+    <span>Anthony Mas y Rubi</span>
+    <span class="where">Buenos Aires</span>
+  </a>
+  <div class="controls">
+    <span class="seg-label" id="render-label">Ver como:</span>
+    <div class="seg seg-mode" role="group" aria-labelledby="render-label">
+      <button type="button" data-mode-btn="light" aria-pressed="true">Claro</button>
+      <button type="button" data-mode-btn="dark" aria-pressed="false">Oscuro</button>
+      <button type="button" data-mode-btn="outlook" aria-pressed="false">Outlook<span class="ol-year"> 2016</span></button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <article class="mail arrive">
+    <div class="outlook-banner" role="note">
+      Si tenés problemas para ver este mensaje, <a href="#" data-mode-link="light">hacé clic aquí para verlo en tu navegador</a>. Sí, así se ven los emails en Outlook. Arreglar esto es parte de mi trabajo.
+    </div>
+
+    <section class="headers" aria-label="Encabezado">
+      <div class="from-wrap">
+      <span class="avatar" role="img" aria-label="Foto de Anthony Mas y Rubi"></span>
+      <dl>
+        <div class="row"><dt>De</dt><dd>Anthony Mas y Rubi &lt;ajmercato@gmail.com&gt;</dd></div>
+        <div class="row"><dt>Para</dt><dd>Quien maqueta emails y ya se peleó con Outlook</dd></div>
+        <div class="row"><dt>Asunto</dt><dd class="subject"><span class="unread" aria-hidden="true"></span>Outlook no es un navegador (y hay que tratarlo así)</dd></div>
+      </dl>
+      </div>
+      <p class="preheader">Guía práctica para maquetar emails HTML que se vean bien en Outlook para Windows: tablas, anchos en atributos, código condicional MSO, botones y escalado de DPI.</p>
+    </section>
+
+    <div class="body">
+      <nav class="crumbs" aria-label="Ruta">
+        <ol><li><a href="../../">Inicio</a></li><li><a href="../">Notas</a></li><li aria-current="page">Emails en Outlook</li></ol>
+      </nav>
+      <h1 class="page-title">Por qué tu email se rompe en Outlook y cómo evitarlo</h1>
+      <p class="note-meta">Por Anthony Mas y Rubi · <time datetime="2026-11-19">19 de noviembre de 2026</time> · 4 min de lectura</p>
+
+      <div class="note">
+<p>Armás un email, se ve perfecto en Gmail y en Apple Mail, y en Outlook aparece con columnas desarmadas, botones sin fondo e imágenes gigantes. No es mala suerte: el Outlook clásico para Windows no muestra el HTML con un motor de navegador, sino con el de Microsoft Word.</p>
+<p>Eso pasa en Outlook 2007 a 2021 y en el Outlook de escritorio que viene con Microsoft 365. El "nuevo Outlook" para Windows y Outlook.com usan un motor web y se portan mucho mejor, pero en muchas empresas el clásico sigue siendo el que más se usa. Si tu público es corporativo, hay que maquetar pensando en él.</p>
+
+<h2>1. Maquetá con tablas</h2>
+<p>Word no entiende <code>flexbox</code>, <code>grid</code> ni <code>float</code> de forma confiable. La estructura que funciona en todos lados son las tablas anidadas, con <code>role="presentation"</code> para que los lectores de pantalla no las anuncien como tablas de datos.</p>
+<pre><code class="language-html">&lt;table role=&quot;presentation&quot; width=&quot;100%&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; border=&quot;0&quot;&gt;
+  &lt;tr&gt;
+    &lt;td align=&quot;center&quot; style=&quot;padding:24px 12px;&quot;&gt;
+      &lt;table role=&quot;presentation&quot; width=&quot;600&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; border=&quot;0&quot;
+             style=&quot;width:100%; max-width:600px;&quot;&gt;
+        &lt;tr&gt;
+          &lt;td style=&quot;padding:32px; background-color:#ffffff;&quot;&gt;
+            Contenido
+          &lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/table&gt;
+    &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;</code></pre>
+<p>Fijate que el ancho está dos veces: <code>width="600"</code> como atributo y <code>max-width:600px</code> en el estilo. Outlook ignora <code>max-width</code> y usa el atributo; el resto de los clientes usa el CSS y la tabla se achica en el celular.</p>
+
+<h2>2. Poné el ancho de las imágenes en el atributo</h2>
+<p>Si una imagen no tiene <code>width</code> como atributo, Outlook la muestra en su tamaño real. Una imagen exportada al doble para pantallas retina aparece al doble de ancho y rompe todo el diseño.</p>
+<pre><code class="language-html">&lt;img src=&quot;https://ejemplo.com/hero@2x.jpg&quot; width=&quot;600&quot; alt=&quot;Texto alternativo&quot;
+     style=&quot;display:block; width:100%; max-width:600px; height:auto; border:0;&quot;&gt;</code></pre>
+<p>El <code>display:block</code> evita el espacio fantasma que algunos clientes agregan debajo de las imágenes.</p>
+
+<h2>3. Usá padding en las celdas, no margin</h2>
+<p>Outlook ignora <code>margin</code> en casi todos los elementos y el padding en <code>div</code> y <code>p</code> no es confiable. Los espacios se arman con <code>padding</code> en los <code>td</code>, que sí respeta.</p>
+
+<h2>4. Código condicional para Outlook</h2>
+<p>Outlook lee unos comentarios especiales que el resto de los clientes ignora. Sirven para darle a Outlook una estructura distinta. El uso más común son las "tablas fantasma": columnas que en el celular se apilan, pero que en Outlook se mantienen lado a lado.</p>
+<pre><code class="language-html">&lt;!--[if mso]&gt;
+&lt;table role=&quot;presentation&quot; width=&quot;600&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; border=&quot;0&quot;&gt;&lt;tr&gt;
+&lt;td width=&quot;300&quot; valign=&quot;top&quot;&gt;
+&lt;![endif]--&gt;
+&lt;div style=&quot;display:inline-block; width:100%; max-width:300px; vertical-align:top;&quot;&gt;
+  Columna 1
+&lt;/div&gt;
+&lt;!--[if mso]&gt;
+&lt;/td&gt;&lt;td width=&quot;300&quot; valign=&quot;top&quot;&gt;
+&lt;![endif]--&gt;
+&lt;div style=&quot;display:inline-block; width:100%; max-width:300px; vertical-align:top;&quot;&gt;
+  Columna 2
+&lt;/div&gt;
+&lt;!--[if mso]&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;![endif]--&gt;</code></pre>
+<p>Los navegadores y el resto de los clientes ven dos <code>div</code> que se acomodan según el ancho disponible. Outlook ve una tabla de dos columnas fijas.</p>
+
+<h2>5. Botones que Outlook respeta</h2>
+<p>Outlook no aplica padding ni fondo al <code>&lt;a&gt;</code>, así que un botón hecho solo con el link se ve como texto suelto. La forma más simple y robusta es darle el fondo y el padding a la celda:</p>
+<pre><code class="language-html">&lt;table role=&quot;presentation&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; border=&quot;0&quot;&gt;
+  &lt;tr&gt;
+    &lt;td bgcolor=&quot;#2B36D9&quot; style=&quot;border-radius:6px; padding:14px 28px;&quot;&gt;
+      &lt;a href=&quot;https://ejemplo.com&quot;
+         style=&quot;color:#ffffff; font-family:Arial, sans-serif; font-size:16px;
+                font-weight:bold; text-decoration:none; display:inline-block;&quot;&gt;
+        Ver la propuesta
+      &lt;/a&gt;
+    &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;</code></pre>
+<p>En Outlook las esquinas quedan rectas y solo el texto es clickeable, pero el botón se ve bien. Si necesitás esquinas redondeadas en Outlook también, se resuelve con VML (<code>v:roundrect</code>) dentro de un comentario condicional.</p>
+
+<h2>6. Interlineado exacto</h2>
+<p>Outlook calcula el <code>line-height</code> a su manera y suele agregar espacio de más. Con <code>mso-line-height-rule: exactly</code> respeta el valor que le diste:</p>
+<pre><code class="language-html">&lt;td style=&quot;font-size:16px; line-height:24px; mso-line-height-rule:exactly;&quot;&gt;</code></pre>
+
+<h2>7. Imágenes de fondo</h2>
+<p>Outlook ignora <code>background-image</code> en CSS. Para un fondo con imagen y texto encima hace falta VML (<code>v:rect</code> con <code>v:fill</code>) dentro de código condicional. Si el diseño lo permite, conviene que el fondo sea un color sólido y que la imagen sea un elemento aparte: es más simple y más accesible.</p>
+
+<h2>8. El escalado de pantalla</h2>
+<p>En Windows con la pantalla al 125 % o al 150 %, Outlook puede agrandar las imágenes y no las tablas, o al revés. Se evita con anchos en atributos (punto 2) y con este bloque en el <code>&lt;head&gt;</code>, que le indica a Outlook la resolución de referencia:</p>
+<pre><code class="language-html">&lt;!--[if mso]&gt;
+&lt;noscript&gt;
+&lt;xml&gt;
+  &lt;o:OfficeDocumentSettings&gt;
+    &lt;o:PixelsPerInch&gt;96&lt;/o:PixelsPerInch&gt;
+  &lt;/o:OfficeDocumentSettings&gt;
+&lt;/xml&gt;
+&lt;/noscript&gt;
+&lt;![endif]--&gt;</code></pre>
+<p>Para que funcione, la etiqueta <code>&lt;html&gt;</code> tiene que declarar el espacio de nombres de Office: <code>xmlns:o="urn:schemas-microsoft-com:office:office"</code>.</p>
+
+<h2>Antes de enviar</h2>
+<ul class="checklist">
+  <li>Estructura con tablas y <code>role="presentation"</code>.</li>
+  <li>Ancho de tablas e imágenes como atributo, además del CSS.</li>
+  <li>Espacios con padding en celdas.</li>
+  <li>Botones con fondo en la celda.</li>
+  <li><code>mso-line-height-rule: exactly</code> en los textos.</li>
+  <li>Bloque de <code>PixelsPerInch</code> en el head.</li>
+  <li>Prueba en Litmus o Email on Acid con Outlook 2016, 2019 y Microsoft 365, también al 120 DPI.</li>
+</ul>
+<div class="callout"><p>Ninguna guía reemplaza la prueba real. Las versiones de Outlook se siguen actualizando, así que tomá esto como base y validá cada envío en un servicio de testing.</p></div>
+      </div>
+
+      <section class="block" aria-labelledby="s-cta">
+        <h2 id="s-cta">¿Necesitás ayuda con esto?</h2>
+        <div class="cta-pair">
+          <div class="cta-box">
+            <h3>Para tu equipo</h3>
+            <p>Si buscás sumar a alguien que resuelva esto todos los días, mirá mi CV.</p>
+            <a class="btn btn-primary" href="../../">Ver CV completo</a>
+          </div>
+          <div class="cta-box">
+            <h3>Para un proyecto puntual</h3>
+            <p>Contame qué necesitás y te respondo con tiempos y una propuesta. Más detalles en <a href="../../maquetacion-emails-html/">Maquetación de emails HTML</a>.</p>
+            <a class="btn btn-ghost" href="mailto:ajmercato@gmail.com?subject=Consulta%20sobre%20Emails%20en%20Outlook">Escribirme</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="block" aria-labelledby="s-more">
+        <h2 id="s-more">Otras notas</h2>
+        <ul class="inbox">
+          <li><a href="../../notas/emails-modo-oscuro/">
+            <span class="dot read" aria-hidden="true"></span>
+            <span class="subj">Modo oscuro en emails HTML: cómo prepararte para cada cliente de correo</span>
+            <span class="tag">Email</span>
+            <span class="snip">Qué invierte cada cliente de correo y qué podés controlar con CSS.</span>
+          </a></li>
+          <li><a href="../../notas/ampscript-basico/">
+            <span class="dot read" aria-hidden="true"></span>
+            <span class="subj">AMPscript para empezar: personalizar un email con datos de una Data Extension</span>
+            <span class="tag">SFMC</span>
+            <span class="snip">Variables, valores por defecto, Lookup y bucles con LookupRows.</span>
+          </a></li>
+        </ul>
+      </section>
+
+      <footer class="signoff">
+        <p>Saludos,</p>
+        <div class="sig-wrap">
+          <span class="avatar" role="img" aria-label="Foto de Anthony Mas y Rubi"></span>
+          <div>
+            <p class="sig">Anthony Mas y Rubi</p>
+            <p class="sig-meta"><span>Web Developer</span><span class="sep"> · </span><span>Buenos Aires, Argentina</span></p>
+            <div class="social"><a href="https://www.linkedin.com/in/anthony-mas-y-rubi/" rel="me noopener" target="_blank" aria-label="LinkedIn de Anthony Mas y Rubi" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.831 1.637-1.86 3.37-1.86 3.601 0 4.267 2.37 4.267 4.455v6.248zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a><a href="https://github.com/AJVzla" rel="me noopener" target="_blank" aria-label="GitHub de Anthony Mas y Rubi" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a></div>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <div class="mail-foot">
+      <p><a href="../../">CV de Anthony Mas y Rubi</a> · <a href="../../notas/">Notas técnicas</a> · <a href="../../maquetacion-emails-html/">Maquetación de emails HTML</a> · <a href="../../salesforce-marketing-cloud/">Salesforce Marketing Cloud</a> · <a href="../../desarrollo-web/">Desarrollo web</a></p>
+    </div>
+  </article>
+</main>
+
+<script src="../../assets/mode.js"></script>
+<script src="../../assets/analytics.js" defer></script>
+<script src="../../assets/chat.js" defer></script>
+</body>
+</html>

@@ -139,7 +139,10 @@ Dentro de `chat-worker`:
 # Tablas nuevas (no toca las del chat)
 npx wrangler d1 execute cv-chat --remote --file=schema.sql
 
-# Clave para que solo tu celular pueda mandar datos. Inventá una larga, por ejemplo: salud_7Qm2xP9kLw4T
+# Generá claves aleatorias con este comando (una para cada secreto):
+node -e "console.log(require('crypto').randomBytes(24).toString('base64url'))"
+
+# Clave para que solo tu celular pueda mandar datos.
 npx wrangler secret put HEALTH_INGEST_KEY
 
 # Clave aleatoria de al menos 32 caracteres para abrir la página privada; no la pongas en el código del sitio.
@@ -179,3 +182,20 @@ Abrí **anthonymasyrubi.com/estado-fisico/** e ingresá el valor que guardaste e
 - **La página dice "Todavía no llegaron datos":** todavía no hubo una sincronización exitosa. Tocá Sync Now en la app.
 - **Faltan pasos o sueño:** el reloj no los está escribiendo en Health Connect (ver paso 2).
 - **Cambiar la zona horaria:** los días se cuentan en hora de Buenos Aires (UTC-3). Para otra zona, agregá `HEALTH_TZ_OFFSET_MIN = "-180"` en `[vars]` de `wrangler.toml` con tu diferencia en minutos.
+
+
+# Métricas del sitio
+
+## Descargas del PDF y conversaciones (Telegram)
+
+Cada vez que alguien descarga el CV en PDF te llega un aviso silencioso a Telegram. En el bot, mandá `/stats` para ver descargas y conversaciones nuevas de hoy, de los últimos 7 días y de los últimos 30.
+
+Se guarda solo un contador por día, tipo e idioma: nada del visitante. La tabla `events` se crea sola; no hace falta correr `schema.sql` otra vez.
+
+## Visitas (Cloudflare Web Analytics)
+
+1. En Cloudflare: **Analytics & Logs → Web Analytics → Add a site**, poné `anthonymasyrubi.com` y elegí la opción de agregar el script a mano (JS snippet).
+2. Copiá el valor de `token` del snippet que te muestra.
+3. Pegalo en `CF_TOKEN`, en `assets/analytics.js`, y subí el cambio.
+
+El token no es secreto (queda en el HTML de cualquier sitio que lo usa). Es gratis y no usa cookies.

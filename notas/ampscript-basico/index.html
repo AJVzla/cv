@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es" data-mode="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AMPscript para empezar: personalizar un email con una Data Extension | Anthony Mas y Rubi</title>
+<meta name="description" content="Introducción práctica a AMPscript en Salesforce Marketing Cloud: variables, valores por defecto, Lookup, LookupRows, bloques condicionales y errores comunes.">
+<link rel="canonical" href="https://anthonymasyrubi.com/notas/ampscript-basico/">
+<meta name="author" content="Anthony Mas y Rubi">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#2B36D9">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Anthony Mas y Rubi">
+<meta property="og:locale" content="es_AR">
+<meta property="og:title" content="AMPscript para empezar: personalizar un email con datos de una Data Extension">
+<meta property="og:description" content="Introducción práctica a AMPscript en Salesforce Marketing Cloud: variables, valores por defecto, Lookup, LookupRows, bloques condicionales y errores comunes.">
+<meta property="og:url" content="https://anthonymasyrubi.com/notas/ampscript-basico/">
+<meta property="og:image" content="https://anthonymasyrubi.com/assets/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "TechArticle",
+   "@id": "https://anthonymasyrubi.com/notas/ampscript-basico/#article",
+   "headline": "AMPscript para empezar: personalizar un email con datos de una Data Extension",
+   "description": "Introducción práctica a AMPscript en Salesforce Marketing Cloud: variables, valores por defecto, Lookup, LookupRows, bloques condicionales y errores comunes.",
+   "url": "https://anthonymasyrubi.com/notas/ampscript-basico/",
+   "mainEntityOfPage": "https://anthonymasyrubi.com/notas/ampscript-basico/",
+   "inLanguage": "es",
+   "datePublished": "2026-11-19",
+   "dateModified": "2026-11-19",
+   "image": "https://anthonymasyrubi.com/assets/og-image.jpg",
+   "author": {
+    "@id": "https://anthonymasyrubi.com/#person"
+   },
+   "publisher": {
+    "@id": "https://anthonymasyrubi.com/#person"
+   },
+   "isPartOf": {
+    "@id": "https://anthonymasyrubi.com/notas/#blog"
+   },
+   "timeRequired": "PT3M"
+  },
+  {
+   "@type": "BreadcrumbList",
+   "@id": "https://anthonymasyrubi.com/notas/ampscript-basico/#breadcrumb",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "Inicio",
+     "item": "https://anthonymasyrubi.com/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "Notas",
+     "item": "https://anthonymasyrubi.com/notas/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 3,
+     "name": "AMPscript para empezar",
+     "item": "https://anthonymasyrubi.com/notas/ampscript-basico/"
+    }
+   ]
+  },
+  {
+   "@type": "Person",
+   "@id": "https://anthonymasyrubi.com/#person",
+   "name": "Anthony Mas y Rubi",
+   "url": "https://anthonymasyrubi.com/",
+   "jobTitle": "Web Developer",
+   "sameAs": [
+    "https://www.linkedin.com/in/anthony-mas-y-rubi/",
+    "https://github.com/AJVzla"
+   ]
+  }
+ ]
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+
+<header class="bar">
+  <a class="brand" href="../../" style="color:inherit;text-decoration:none">
+    <span class="mono" aria-hidden="true">AM</span>
+    <span>Anthony Mas y Rubi</span>
+    <span class="where">Buenos Aires</span>
+  </a>
+  <div class="controls">
+    <span class="seg-label" id="render-label">Ver como:</span>
+    <div class="seg seg-mode" role="group" aria-labelledby="render-label">
+      <button type="button" data-mode-btn="light" aria-pressed="true">Claro</button>
+      <button type="button" data-mode-btn="dark" aria-pressed="false">Oscuro</button>
+      <button type="button" data-mode-btn="outlook" aria-pressed="false">Outlook<span class="ol-year"> 2016</span></button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <article class="mail arrive">
+    <div class="outlook-banner" role="note">
+      Si tenés problemas para ver este mensaje, <a href="#" data-mode-link="light">hacé clic aquí para verlo en tu navegador</a>. Sí, así se ven los emails en Outlook. Arreglar esto es parte de mi trabajo.
+    </div>
+
+    <section class="headers" aria-label="Encabezado">
+      <div class="from-wrap">
+      <span class="avatar" role="img" aria-label="Foto de Anthony Mas y Rubi"></span>
+      <dl>
+        <div class="row"><dt>De</dt><dd>Anthony Mas y Rubi &lt;ajmercato@gmail.com&gt;</dd></div>
+        <div class="row"><dt>Para</dt><dd>Quien empieza con Salesforce Marketing Cloud</dd></div>
+        <div class="row"><dt>Asunto</dt><dd class="subject"><span class="unread" aria-hidden="true"></span>Tu primer email personalizado en Marketing Cloud</dd></div>
+      </dl>
+      </div>
+      <p class="preheader">Introducción práctica a AMPscript en Salesforce Marketing Cloud: variables, valores por defecto, Lookup, LookupRows, bloques condicionales y errores comunes.</p>
+    </section>
+
+    <div class="body">
+      <nav class="crumbs" aria-label="Ruta">
+        <ol><li><a href="../../">Inicio</a></li><li><a href="../">Notas</a></li><li aria-current="page">AMPscript para empezar</li></ol>
+      </nav>
+      <h1 class="page-title">AMPscript para empezar: personalizar un email con datos de una Data Extension</h1>
+      <p class="note-meta">Por Anthony Mas y Rubi · <time datetime="2026-11-19">19 de noviembre de 2026</time> · 3 min de lectura</p>
+
+      <div class="note">
+<p>AMPscript es el lenguaje de Salesforce Marketing Cloud para personalizar emails, SMS y CloudPages con los datos de cada contacto. Se ejecuta en el momento del envío: cada persona recibe una versión del email armada con sus datos.</p>
+<p>Esta nota cubre lo que más se usa en el día a día. Los ejemplos suponen que el email se envía a una Data Extension con los campos <code>Nombre</code> y <code>Email</code>.</p>
+
+<h2>Bloques y salidas</h2>
+<p>El código va entre <code>%%[</code> y <code>]%%</code>. Para mostrar un valor en el HTML se usa <code>%%=v(@variable)=%%</code>.</p>
+<pre><code class="language-ampscript">%%[
+  SET @nombre = AttributeValue(&quot;Nombre&quot;)
+]%%
+
+&lt;p&gt;Hola, %%=v(@nombre)=%%&lt;/p&gt;</code></pre>
+<p><code>AttributeValue</code> lee un campo de la Data Extension de envío. Si el campo no existe, devuelve vacío en lugar de cortar el envío con un error. Por eso conviene usarlo en vez de escribir el nombre del campo directo.</p>
+
+<h2>Valores por defecto</h2>
+<p>Siempre hay contactos con datos incompletos. Antes de mostrar un dato, revisá si está vacío:</p>
+<pre><code class="language-ampscript">%%[
+  SET @nombre = AttributeValue(&quot;Nombre&quot;)
+
+  IF Empty(@nombre) THEN
+    SET @saludo = &quot;Hola&quot;
+  ELSE
+    SET @saludo = Concat(&quot;Hola, &quot;, ProperCase(@nombre))
+  ENDIF
+]%%
+
+&lt;p&gt;%%=v(@saludo)=%%&lt;/p&gt;</code></pre>
+<p><code>ProperCase</code> pone en mayúscula la primera letra de cada palabra, útil cuando los nombres vienen todos en mayúsculas o minúsculas.</p>
+
+<h2>Traer un dato de otra Data Extension</h2>
+<p><code>Lookup</code> busca en otra Data Extension y devuelve el valor de un campo de la primera fila que coincide:</p>
+<pre><code class="language-ampscript">%%[
+  SET @nivel = Lookup(&quot;Clientes_Puntos&quot;, &quot;Nivel&quot;, &quot;SubscriberKey&quot;, _subscriberkey)
+]%%</code></pre>
+<p>Los parámetros son: la Data Extension, el campo que querés traer, el campo por el que buscás y el valor buscado. <code>_subscriberkey</code> es la clave del contacto que está recibiendo el email. Si no hay coincidencia, devuelve vacío.</p>
+
+<h2>Mostrar un bloque según el dato</h2>
+<pre><code class="language-ampscript">%%[ IF @nivel == &quot;Oro&quot; THEN ]%%
+  &lt;p&gt;Tenés envío gratis en todas tus compras.&lt;/p&gt;
+%%[ ELSEIF @nivel == &quot;Plata&quot; THEN ]%%
+  &lt;p&gt;Tenés 10 % de descuento en tu próxima compra.&lt;/p&gt;
+%%[ ELSE ]%%
+  &lt;p&gt;Sumá puntos con cada compra.&lt;/p&gt;
+%%[ ENDIF ]%%</code></pre>
+<p>Podés abrir y cerrar bloques en el medio del HTML. Es la forma más simple de tener una sola pieza con contenido distinto por segmento.</p>
+
+<h2>Listar varias filas</h2>
+<p>Cuando un contacto tiene varias filas en otra Data Extension (por ejemplo, sus últimas compras), se usa <code>LookupRows</code> con un bucle:</p>
+<pre><code class="language-ampscript">%%[
+  SET @compras = LookupRows(&quot;Compras&quot;, &quot;SubscriberKey&quot;, _subscriberkey)
+  SET @total = RowCount(@compras)
+
+  IF @total &gt; 0 THEN
+]%%
+&lt;ul&gt;
+%%[
+    FOR @i = 1 TO @total DO
+      SET @fila = Row(@compras, @i)
+      SET @producto = Field(@fila, &quot;Producto&quot;)
+]%%
+  &lt;li&gt;%%=v(@producto)=%%&lt;/li&gt;
+%%[
+    NEXT @i
+]%%
+&lt;/ul&gt;
+%%[ ENDIF ]%%</code></pre>
+<p><code>LookupRows</code> devuelve hasta 2000 filas. Si necesitás ordenarlas o limitar cuántas mostrar, mirá <code>LookupOrderedRows</code>.</p>
+
+<h2>En CloudPages</h2>
+<p>En una CloudPage el AMPscript se ejecuta cuando alguien abre la página. Dos funciones que vas a usar seguido en formularios:</p>
+<ul>
+  <li><code>RequestParameter("email")</code> lee un dato enviado por el formulario o por la URL.</li>
+  <li><code>UpsertData</code> guarda o actualiza una fila en una Data Extension. En emails se usa <code>UpsertDE</code>, que trabaja en el momento del envío.</li>
+</ul>
+<pre><code class="language-ampscript">%%[
+  SET @email = RequestParameter(&quot;email&quot;)
+  SET @nombre = RequestParameter(&quot;nombre&quot;)
+
+  IF NOT Empty(@email) THEN
+    UpsertData(&quot;Registros&quot;, 1, &quot;Email&quot;, @email, &quot;Nombre&quot;, @nombre, &quot;Fecha&quot;, Now())
+  ENDIF
+]%%</code></pre>
+<p>El <code>1</code> indica cuántos pares de campo y valor forman la clave para buscar la fila. Validá siempre los datos del formulario antes de guardarlos.</p>
+
+<h2>Errores comunes</h2>
+<ul>
+  <li><strong>Comillas tipográficas:</strong> si copiás código desde Word o Google Docs, las comillas “curvas” rompen el script. Usá siempre comillas rectas.</li>
+  <li><strong>Nombres de campos:</strong> tienen que coincidir exactamente con los de la Data Extension, incluidos los espacios.</li>
+  <li><strong>No probar con datos reales:</strong> usá la vista previa con contactos de la Data Extension, incluidos algunos con campos vacíos.</li>
+  <li><strong>Lógica en todos lados:</strong> conviene declarar las variables en un bloque al principio y dejar el HTML solo con las salidas. Es más fácil de leer y de mantener.</li>
+</ul>
+      </div>
+
+      <section class="block" aria-labelledby="s-cta">
+        <h2 id="s-cta">¿Necesitás ayuda con esto?</h2>
+        <div class="cta-pair">
+          <div class="cta-box">
+            <h3>Para tu equipo</h3>
+            <p>Si buscás sumar a alguien que resuelva esto todos los días, mirá mi CV.</p>
+            <a class="btn btn-primary" href="../../">Ver CV completo</a>
+          </div>
+          <div class="cta-box">
+            <h3>Para un proyecto puntual</h3>
+            <p>Contame qué necesitás y te respondo con tiempos y una propuesta. Más detalles en <a href="../../salesforce-marketing-cloud/">Desarrollo en Salesforce Marketing Cloud</a>.</p>
+            <a class="btn btn-ghost" href="mailto:ajmercato@gmail.com?subject=Consulta%20sobre%20AMPscript%20para%20empezar">Escribirme</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="block" aria-labelledby="s-more">
+        <h2 id="s-more">Otras notas</h2>
+        <ul class="inbox">
+          <li><a href="../../notas/emails-outlook/">
+            <span class="dot read" aria-hidden="true"></span>
+            <span class="subj">Por qué tu email se rompe en Outlook y cómo evitarlo</span>
+            <span class="tag">Email</span>
+            <span class="snip">Tablas, anchos en atributos, código condicional y botones que Outlook respeta.</span>
+          </a></li>
+          <li><a href="../../notas/emails-modo-oscuro/">
+            <span class="dot read" aria-hidden="true"></span>
+            <span class="subj">Modo oscuro en emails HTML: cómo prepararte para cada cliente de correo</span>
+            <span class="tag">Email</span>
+            <span class="snip">Qué invierte cada cliente de correo y qué podés controlar con CSS.</span>
+          </a></li>
+        </ul>
+      </section>
+
+      <footer class="signoff">
+        <p>Saludos,</p>
+        <div class="sig-wrap">
+          <span class="avatar" role="img" aria-label="Foto de Anthony Mas y Rubi"></span>
+          <div>
+            <p class="sig">Anthony Mas y Rubi</p>
+            <p class="sig-meta"><span>Web Developer</span><span class="sep"> · </span><span>Buenos Aires, Argentina</span></p>
+            <div class="social"><a href="https://www.linkedin.com/in/anthony-mas-y-rubi/" rel="me noopener" target="_blank" aria-label="LinkedIn de Anthony Mas y Rubi" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.831 1.637-1.86 3.37-1.86 3.601 0 4.267 2.37 4.267 4.455v6.248zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a><a href="https://github.com/AJVzla" rel="me noopener" target="_blank" aria-label="GitHub de Anthony Mas y Rubi" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a></div>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <div class="mail-foot">
+      <p><a href="../../">CV de Anthony Mas y Rubi</a> · <a href="../../notas/">Notas técnicas</a> · <a href="../../maquetacion-emails-html/">Maquetación de emails HTML</a> · <a href="../../salesforce-marketing-cloud/">Salesforce Marketing Cloud</a> · <a href="../../desarrollo-web/">Desarrollo web</a></p>
+    </div>
+  </article>
+</main>
+
+<script src="../../assets/mode.js"></script>
+<script src="../../assets/analytics.js" defer></script>
+<script src="../../assets/chat.js" defer></script>
+</body>
+</html>

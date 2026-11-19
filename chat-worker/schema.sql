@@ -75,3 +75,15 @@ CREATE TABLE IF NOT EXISTS health_meta (
   key   TEXT PRIMARY KEY,
   value TEXT
 );
+
+-- ---------- Métricas del sitio ----------
+
+-- Descargas del PDF y conversaciones nuevas, agregadas por día (sin datos del visitante).
+-- El Worker la crea solo si no existe.
+CREATE TABLE IF NOT EXISTS events (
+  day  TEXT    NOT NULL,             -- YYYY-MM-DD en hora de Buenos Aires
+  type TEXT    NOT NULL,             -- pdf | chat
+  lang TEXT    NOT NULL DEFAULT 'es',
+  n    INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (day, type, lang)
+);

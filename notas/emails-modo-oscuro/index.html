@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es" data-mode="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modo oscuro en emails HTML: cómo prepararte para cada cliente | Anthony Mas y Rubi</title>
+<meta name="description" content="Cómo se comporta el modo oscuro en Apple Mail, Gmail y Outlook, y qué podés controlar con color-scheme, prefers-color-scheme y los selectores de Outlook.">
+<link rel="canonical" href="https://anthonymasyrubi.com/notas/emails-modo-oscuro/">
+<meta name="author" content="Anthony Mas y Rubi">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#2B36D9">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Anthony Mas y Rubi">
+<meta property="og:locale" content="es_AR">
+<meta property="og:title" content="Modo oscuro en emails HTML: cómo prepararte para cada cliente de correo">
+<meta property="og:description" content="Cómo se comporta el modo oscuro en Apple Mail, Gmail y Outlook, y qué podés controlar con color-scheme, prefers-color-scheme y los selectores de Outlook.">
+<meta property="og:url" content="https://anthonymasyrubi.com/notas/emails-modo-oscuro/">
+<meta property="og:image" content="https://anthonymasyrubi.com/assets/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "TechArticle",
+   "@id": "https://anthonymasyrubi.com/notas/emails-modo-oscuro/#article",
+   "headline": "Modo oscuro en emails HTML: cómo prepararte para cada cliente de correo",
+   "description": "Cómo se comporta el modo oscuro en Apple Mail, Gmail y Outlook, y qué podés controlar con color-scheme, prefers-color-scheme y los selectores de Outlook.",
+   "url": "https://anthonymasyrubi.com/notas/emails-modo-oscuro/",
+   "mainEntityOfPage": "https://anthonymasyrubi.com/notas/emails-modo-oscuro/",
+   "inLanguage": "es",
+   "datePublished": "2026-11-19",
+   "dateModified": "2026-11-19",
+   "image": "https://anthonymasyrubi.com/assets/og-image.jpg",
+   "author": {
+    "@id": "https://anthonymasyrubi.com/#person"
+   },
+   "publisher": {
+    "@id": "https://anthonymasyrubi.com/#person"
+   },
+   "isPartOf": {
+    "@id": "https://anthonymasyrubi.com/notas/#blog"
+   },
+   "timeRequired": "PT3M"
+  },
+  {
+   "@type": "BreadcrumbList",
+   "@id": "https://anthonymasyrubi.com/notas/emails-modo-oscuro/#breadcrumb",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "Inicio",
+     "item": "https://anthonymasyrubi.com/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "Notas",
+     "item": "https://anthonymasyrubi.com/notas/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 3,
+     "name": "Modo oscuro en emails",
+     "item": "https://anthonymasyrubi.com/notas/emails-modo-oscuro/"
+    }
+   ]
+  },
+  {
+   "@type": "Person",
+   "@id": "https://anthonymasyrubi.com/#person",
+   "name": "Anthony Mas y Rubi",
+   "url": "https://anthonymasyrubi.com/",
+   "jobTitle": "Web Developer",
+   "sameAs": [
+    "https://www.linkedin.com/in/anthony-mas-y-rubi/",
+    "https://github.com/AJVzla"
+   ]
+  }
+ ]
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+
+<header class="bar">
+  <a class="brand" href="../../" style="color:inherit;text-decoration:none">
+    <span class="mono" aria-hidden="true">AM</span>
+    <span>Anthony Mas y Rubi</span>
+    <span class="where">Buenos Aires</span>
+  </a>
+  <div class="controls">
+    <span class="seg-label" id="render-label">Ver como:</span>
+    <div class="seg seg-mode" role="group" aria-labelledby="render-label">
+      <button type="button" data-mode-btn="light" aria-pressed="true">Claro</button>
+      <button type="button" data-mode-btn="dark" aria-pressed="false">Oscuro</button>
+      <button type="button" data-mode-btn="outlook" aria-pressed="false">Outlook<span class="ol-year"> 2016</span></button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <article class="mail arrive">
+    <div class="outlook-banner" role="note">
+      Si tenés problemas para ver este mensaje, <a href="#" data-mode-link="light">hacé clic aquí para verlo en tu navegador</a>. Sí, así se ven los emails en Outlook. Arreglar esto es parte de mi trabajo.
+    </div>
+
+    <section class="headers" aria-label="Encabezado">
+      <div class="from-wrap">
+      <span class="avatar" role="img" aria-label="Foto de Anthony Mas y Rubi"></span>
+      <dl>
+        <div class="row"><dt>De</dt><dd>Anthony Mas y Rubi &lt;ajmercato@gmail.com&gt;</dd></div>
+        <div class="row"><dt>Para</dt><dd>Quien diseña o maqueta emails</dd></div>
+        <div class="row"><dt>Asunto</dt><dd class="subject"><span class="unread" aria-hidden="true"></span>Tu email en modo oscuro no se ve como lo diseñaste</dd></div>
+      </dl>
+      </div>
+      <p class="preheader">Cómo se comporta el modo oscuro en Apple Mail, Gmail y Outlook, y qué podés controlar con color-scheme, prefers-color-scheme y los selectores de Outlook.</p>
+    </section>
+
+    <div class="body">
+      <nav class="crumbs" aria-label="Ruta">
+        <ol><li><a href="../../">Inicio</a></li><li><a href="../">Notas</a></li><li aria-current="page">Modo oscuro en emails</li></ol>
+      </nav>
+      <h1 class="page-title">Modo oscuro en emails HTML: cómo prepararte para cada cliente de correo</h1>
+      <p class="note-meta">Por Anthony Mas y Rubi · <time datetime="2026-11-19">19 de noviembre de 2026</time> · 3 min de lectura</p>
+
+      <div class="note">
+<p>Cada vez más gente lee el correo en modo oscuro, y cada cliente de correo lo aplica a su manera. Algunos respetan los estilos que vos definís, otros invierten los colores por su cuenta y otros no te dejan intervenir. Lo primero es saber qué esperar de cada uno.</p>
+
+<h2>Los tres comportamientos</h2>
+<ul>
+  <li><strong>Sin cambios:</strong> el email se ve igual que en modo claro.</li>
+  <li><strong>Inversión parcial:</strong> el cliente oscurece los fondos claros y aclara los textos oscuros, pero deja como están las zonas que ya eran oscuras.</li>
+  <li><strong>Inversión total:</strong> el cliente invierte todos los colores, incluso los que ya eran oscuros. Un banner azul oscuro con texto blanco puede terminar celeste con texto negro.</li>
+</ul>
+
+<h2>Qué hace cada cliente</h2>
+<p>Esto es lo que muestran las pruebas más difundidas al momento de escribir esta nota. Los clientes cambian con cada actualización, así que tomalo como punto de partida.</p>
+<table>
+  <thead><tr><th>Cliente</th><th>Qué hace</th><th>¿Lo podés controlar?</th></tr></thead>
+  <tbody>
+    <tr><td data-label="Cliente">Apple Mail (macOS e iOS)</td><td data-label="Comportamiento">Respeta tus estilos de modo oscuro si los declarás. Si no, puede oscurecer los emails que no tienen colores definidos.</td><td data-label="Control">Sí, con <code>prefers-color-scheme</code>.</td></tr>
+    <tr><td data-label="Cliente">Outlook.com y apps de Outlook para iOS y Android</td><td data-label="Comportamiento">Inversión parcial.</td><td data-label="Control">En parte, con los selectores <code>[data-ogsc]</code> y <code>[data-ogsb]</code>.</td></tr>
+    <tr><td data-label="Cliente">Gmail (app de iOS)</td><td data-label="Comportamiento">Inversión total.</td><td data-label="Control">No.</td></tr>
+    <tr><td data-label="Cliente">Gmail (app de Android)</td><td data-label="Comportamiento">Inversión parcial.</td><td data-label="Control">No.</td></tr>
+    <tr><td data-label="Cliente">Outlook clásico para Windows</td><td data-label="Comportamiento">Inversión total cuando el usuario usa el tema oscuro.</td><td data-label="Control">No.</td></tr>
+  </tbody>
+</table>
+<p>Conclusión práctica: hay que escribir estilos de modo oscuro para los clientes que los aceptan, y diseñar para que el email aguante la inversión en los que no.</p>
+
+<h2>1. Declarar que el email soporta modo oscuro</h2>
+<p>En el <code>&lt;head&gt;</code>:</p>
+<pre><code class="language-html">&lt;meta name=&quot;color-scheme&quot; content=&quot;light dark&quot;&gt;
+&lt;meta name=&quot;supported-color-schemes&quot; content=&quot;light dark&quot;&gt;
+&lt;style&gt;
+  :root {
+    color-scheme: light dark;
+    supported-color-schemes: light dark;
+  }
+&lt;/style&gt;</code></pre>
+
+<h2>2. Estilos propios para modo oscuro</h2>
+<p>Con una media query y clases en los elementos que querés cambiar. El <code>!important</code> es necesario porque tus estilos en línea tienen prioridad.</p>
+<pre><code class="language-html">&lt;style&gt;
+  @media (prefers-color-scheme: dark) {
+    .dm-bg   { background-color: #121826 !important; }
+    .dm-text { color: #E7E9EF !important; }
+    .dm-hide { display: none !important; }
+    .dm-show { display: block !important; max-height: none !important; }
+  }
+&lt;/style&gt;
+
+&lt;td class=&quot;dm-bg&quot; style=&quot;background-color:#ffffff;&quot;&gt;
+  &lt;p class=&quot;dm-text&quot; style=&quot;color:#1B2130;&quot;&gt;Hola&lt;/p&gt;
+&lt;/td&gt;</code></pre>
+
+<h2>3. Cambiar el logo</h2>
+<p>Un logo oscuro sobre fondo transparente desaparece en modo oscuro. Podés tener dos versiones y mostrar una u otra:</p>
+<pre><code class="language-html">&lt;img class=&quot;dm-hide&quot; src=&quot;logo-oscuro.png&quot; width=&quot;140&quot; alt=&quot;Marca&quot; style=&quot;display:block;&quot;&gt;
+&lt;!--[if !mso]&gt;&lt;!--&gt;
+&lt;img class=&quot;dm-show&quot; src=&quot;logo-claro.png&quot; width=&quot;140&quot; alt=&quot;Marca&quot;
+     style=&quot;display:none; max-height:0; overflow:hidden;&quot;&gt;
+&lt;!--&lt;![endif]--&gt;</code></pre>
+<p>La segunda imagen va dentro de un comentario que Outlook clásico no lee, porque Outlook ignora el <code>display:none</code> y mostraría los dos logos.</p>
+
+<h2>4. Outlook.com y las apps de Outlook</h2>
+<p>Estos clientes agregan atributos a los elementos que modifican: <code>data-ogsc</code> en los que cambian de color de texto y <code>data-ogsb</code> en los que cambian de fondo. Podés usarlos para corregir lo que la inversión automática dejó mal:</p>
+<pre><code class="language-html">&lt;style&gt;
+  [data-ogsc] .dm-text { color: #E7E9EF !important; }
+  [data-ogsb] .dm-bg   { background-color: #121826 !important; }
+&lt;/style&gt;</code></pre>
+
+<h2>5. Diseñar para lo que no controlás</h2>
+<ul>
+  <li><strong>Logos e íconos:</strong> usá PNG con un contorno sutil o un fondo propio, para que se vean sobre cualquier color.</li>
+  <li><strong>Texto en imágenes:</strong> evitalo. Además de no adaptarse al modo oscuro, no se lee si las imágenes no cargan.</li>
+  <li><strong>Imágenes con fondo blanco:</strong> en modo oscuro quedan como rectángulos blancos. Si es una foto de producto, conviene un fondo de color o transparente.</li>
+  <li><strong>Contraste:</strong> revisá que los colores de marca sigan siendo legibles invertidos.</li>
+</ul>
+
+<h2>Antes de enviar</h2>
+<ul class="checklist">
+  <li>Meta tags y <code>color-scheme</code> en el head.</li>
+  <li>Clases de modo oscuro en fondos y textos principales.</li>
+  <li>Logo que se ve sobre fondo claro y oscuro.</li>
+  <li>Correcciones para <code>[data-ogsc]</code> y <code>[data-ogsb]</code>.</li>
+  <li>Prueba en Litmus o Email on Acid con las vistas de modo oscuro de Apple Mail, Gmail y Outlook.</li>
+</ul>
+      </div>
+
+      <section class="block" aria-labelledby="s-cta">
+        <h2 id="s-cta">¿Necesitás ayuda con esto?</h2>
+        <div class="cta-pair">
+          <div class="cta-box">
+            <h3>Para tu equipo</h3>
+            <p>Si buscás sumar a alguien que resuelva esto todos los días, mirá mi CV.</p>
+            <a class="btn btn-primary" href="../../">Ver CV completo</a>
+          </div>
+          <div class="cta-box">
+            <h3>Para un proyecto puntual</h3>
+            <p>Contame qué necesitás y te respondo con tiempos y una propuesta. Más detalles en <a href="../../maquetacion-emails-html/">Maquetación de emails HTML</a>.</p>
+            <a class="btn btn-ghost" href="mailto:ajmercato@gmail.com?subject=Consulta%20sobre%20Modo%20oscuro%20en%20emails">Escribirme</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="block" aria-labelledby="s-more">
+        <h2 id="s-more">Otras notas</h2>
+        <ul class="inbox">
+          <li><a href="../../notas/emails-outlook/">
+            <span class="dot read" aria-hidden="true"></span>
+            <span class="subj">Por qué tu email se rompe en Outlook y cómo evitarlo</span>
+            <span class="tag">Email</span>
+            <span class="snip">Tablas, anchos en atributos, código condicional y botones que Outlook respeta.</span>
+          </a></li>
+          <li><a href="../../notas/ampscript-basico/">
+            <span class="dot read" aria-hidden="true"></span>
+            <span class="subj">AMPscript para empezar: personalizar un email con datos de una Data Extension</span>
+            <span class="tag">SFMC</span>
+            <span class="snip">Variables, valores por defecto, Lookup y bucles con LookupRows.</span>
+          </a></li>
+        </ul>
+      </section>
+
+      <footer class="signoff">
+        <p>Saludos,</p>
+        <div class="sig-wrap">
+          <span class="avatar" role="img" aria-label="Foto de Anthony Mas y Rubi"></span>
+          <div>
+            <p class="sig">Anthony Mas y Rubi</p>
+            <p class="sig-meta"><span>Web Developer</span><span class="sep"> · </span><span>Buenos Aires, Argentina</span></p>
+            <div class="social"><a href="https://www.linkedin.com/in/anthony-mas-y-rubi/" rel="me noopener" target="_blank" aria-label="LinkedIn de Anthony Mas y Rubi" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.831 1.637-1.86 3.37-1.86 3.601 0 4.267 2.37 4.267 4.455v6.248zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a><a href="https://github.com/AJVzla" rel="me noopener" target="_blank" aria-label="GitHub de Anthony Mas y Rubi" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a></div>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <div class="mail-foot">
+      <p><a href="../../">CV de Anthony Mas y Rubi</a> · <a href="../../notas/">Notas técnicas</a> · <a href="../../maquetacion-emails-html/">Maquetación de emails HTML</a> · <a href="../../salesforce-marketing-cloud/">Salesforce Marketing Cloud</a> · <a href="../../desarrollo-web/">Desarrollo web</a></p>
+    </div>
+  </article>
+</main>
+
+<script src="../../assets/mode.js"></script>
+<script src="../../assets/analytics.js" defer></script>
+<script src="../../assets/chat.js" defer></script>
+</body>
+</html>

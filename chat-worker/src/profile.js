@@ -9,7 +9,7 @@ DATOS
 - Vive en Buenos Aires, Argentina. Se formó en Maracaibo, Venezuela.
 - Email: ajmercato@gmail.com · Teléfono: +54 11 5905 6478
 - Sitio: https://anthonymasyrubi.com · LinkedIn: https://www.linkedin.com/in/anthony-mas-y-rubi/ · GitHub: https://github.com/AJVzla
-- Busca sumarse a un equipo (empleo), y también toma proyectos freelance puntuales.
+- Está abierto a nuevas oportunidades de empleo, y también toma proyectos freelance puntuales.
 - Trabaja de forma remota con equipos de otros países.
 
 EXPERIENCIA
@@ -17,18 +17,24 @@ EXPERIENCIA
    - Email: templates de email en HTML y CSS desde cero, validados en Outlook, modo oscuro y los principales clientes de correo. Campañas dinámicas en Salesforce Marketing Cloud con AMPscript.
    - CloudPages y datos: CloudPages con formularios propios, lógica de negocio e integración con Data Extensions. Diseño y gestión de Data Extensions y sus relaciones.
    - Web: componentes e interfaces en React. Componentes y templates reutilizables. Mantenimiento de sitios en Drupal y WordPress.
+   - Banners y piezas digitales: produce banners para campañas digitales y los adapta a todos los formatos y medidas que pide cada medio (resizing). Maqueta en pixel perfect: lo que se publica coincide al píxel con el diseño aprobado.
    - Forma de trabajo: tareas de punta a punta según requerimientos funcionales y técnicos, con equipos de otros países. Git, GitHub, testing manual y validación cross-platform. Usa GitHub Copilot para generar y revisar código y acelerar templates de email y AMPscript.
-2) Frontend Developer en Synapsis Diseño Web, mayo 2019 – octubre 2021.
+2) Web Developer en Synapsis Diseño Web, mayo 2019 – octubre 2021.
    - Sitios, landing pages y newsletters con WordPress, React.js, HTML, CSS y JavaScript.
    - Mantenimiento y optimización de plataformas web. Hosting, dominios y migraciones.
    - Correo en Google Workspace y campañas de email masivas.
 
 HABILIDADES
-- Frontend: HTML5, JavaScript, Sass/SCSS, Tailwind CSS, React.js, diseño responsive, componentes reutilizables.
-- Marketing tech: Salesforce Marketing Cloud, AMPscript, CloudPages, Data Extensions, Adobe Journey Optimizer, Adobe Experience Manager.
+- Frontend: HTML5, JavaScript, Sass/SCSS, Tailwind CSS, React.js, pixel perfect, diseño responsive, componentes reutilizables.
+- Marketing tech: Salesforce Marketing Cloud, AMPscript, CloudPages, Data Extensions, Adobe Journey Optimizer, Adobe Experience Manager, banners y resizing.
 - Email: templates HTML desde cero, compatibilidad con Outlook, modo oscuro, testing entre clientes de correo (Litmus, Email on Acid).
 - IA aplicada: GitHub Copilot, Claude Code, Codex.
 - Herramientas: Git, GitHub, Jira, Figma, WordPress, Drupal, SQL (fundamentos), Photoshop, Premiere Pro.
+
+NOTAS TÉCNICAS (en https://anthonymasyrubi.com/notas/)
+- "Por qué tu email se rompe en Outlook y cómo evitarlo": https://anthonymasyrubi.com/notas/emails-outlook/
+- "Modo oscuro en emails HTML": https://anthonymasyrubi.com/notas/emails-modo-oscuro/
+- "AMPscript para empezar": https://anthonymasyrubi.com/notas/ampscript-basico/
 
 FORMACIÓN
 - Ingeniería de Sistemas, Universidad Dr. José Gregorio Hernández, Maracaibo, Venezuela (2013–2018).
