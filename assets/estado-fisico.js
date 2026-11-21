@@ -377,6 +377,14 @@ const HEALTH_ENDPOINT = "https://cv-chat.anthonymasyrubi.workers.dev/health/summ
     $("fx-rhr-sub").textContent = h.vo2max ? `VO₂ máx ${nf1.format(h.vo2max.value)} ml/kg/min · ${relDay(h.vo2max.date, today.date)}` : (rhrAvg ? `Prom. ${Math.round(rhrAvg)} bpm` : "");
     lineChart($("fx-rhr-chart"), days, { value: x => x.resting_bpm, label: "Pulso en reposo por día", unit: "bpm" });
 
+    // Qué mandó la app en el último envío (para verificar que lleguen presión y SpO2)
+    const NAMES = { steps: "pasos", distance: "distancia", active_calories: "calorías", heart_rate: "pulso", resting_heart_rate: "pulso en reposo",
+      vo2_max: "VO₂ máx", sleep: "sueño", exercise: "entrenamientos", blood_pressure: "presión", oxygen_saturation: "SpO₂" };
+    const rec = d.received && d.received.types ? Object.entries(d.received.types).filter(([, n]) => n > 0) : [];
+    $("fx-received").textContent = rec.length
+      ? "Último envío de la app: " + rec.map(([k, n]) => `${NAMES[k] || k.replace(/_/g, " ")} (${nf.format(n)})`).join(", ") + "."
+      : "";
+
     // Presión arterial y SpO2: los paneles aparecen solo si el reloj las registró
     const hasBp = days.some(x => x.bp_sys != null), hasSpo2 = days.some(x => x.spo2_avg != null);
     $("fx-bp-panel").hidden = !hasBp; $("fx-spo2-panel").hidden = !hasSpo2;
