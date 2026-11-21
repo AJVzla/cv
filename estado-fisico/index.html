@@ -109,6 +109,17 @@
         <div class="fx-chart" id="fx-rhr-chart"></div>
       </article>
 
+      <article class="fx-panel fx-span-6" aria-labelledby="t-bp" id="fx-bp-panel" hidden>
+        <header class="fx-panel-head"><h2 id="t-bp">Presión arterial</h2><p id="fx-bp-sub"></p></header>
+        <div class="fx-chart" id="fx-bp-chart"></div>
+        <p class="fx-chart-note">Cada barra va de la diastólica a la sistólica, promedio del día. Medición del reloj: no reemplaza un tensiómetro.</p>
+      </article>
+
+      <article class="fx-panel fx-span-6" aria-labelledby="t-spo2" id="fx-spo2-panel" hidden>
+        <header class="fx-panel-head"><h2 id="t-spo2">Saturación de oxígeno</h2><p id="fx-spo2-sub"></p></header>
+        <div class="fx-chart" id="fx-spo2-chart"></div>
+      </article>
+
       <article class="fx-panel fx-span-8" aria-labelledby="t-workouts">
         <header class="fx-panel-head"><h2 id="t-workouts">Entrenamientos</h2><p id="fx-workouts-sub"></p></header>
         <div class="fx-table-scroll"><table class="fx-wtable" id="fx-workouts"></table></div>
@@ -130,6 +141,7 @@
 
   <footer class="fx-foot">
     <p>Datos de Health Connect enviados por la app HC Webhook a mi servidor. Sin horarios exactos de sueño. Esta página no aparece en Google. <a href="../">Volver al CV</a></p>
+    <p id="fx-received"></p>
   </footer>
 </main>
 
