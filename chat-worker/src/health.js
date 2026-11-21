@@ -5,7 +5,8 @@
  * GET  /health/summary  Lo lee la página. Devuelve solo resúmenes por día (sin horarios exactos de sueño).
  *
  * Solo se guardan: actividad (pasos, distancia, calorías activas), entrenamientos,
- * corazón (pulso, pulso en reposo, VO2 máx) y sueño. Todo lo demás que mande la app se ignora.
+ * corazón (pulso, pulso en reposo, VO2 máx), presión arterial, saturación de oxígeno y sueño.
+ * Todo lo demás que mande la app se ignora (solo se anota qué tipos llegaron, para diagnosticar).
  *
  * Límites de D1 en el plan gratis: 50 consultas por invocación y 100 parámetros por consulta.
  * Por eso los números se validan y se escriben en lote (cientos de filas por sentencia).
@@ -68,9 +69,11 @@ function bulkUpsert(table, cols, rows, conflict, update) {
 /* ---------------- ingest ---------------- */
 
 export function parsePayload(p) {
-  const out = { buckets: [], hr: [], points: [], sleep: [], exercise: [], deleted: [] };
+  const out = { buckets: [], hr: [], points: [], vitals: [], sleep: [], exercise: [], deleted: [], received: {} };
   if (!p || typeof p !== "object") return out;
   const arr = k => (Array.isArray(p[k]) ? p[k] : []);
+  // Qué tipos mandó la app y cuántos registros (solo nombres y cantidades, para verificar desde la página)
+  for (const [k, v] of Object.entries(p)) if (Array.isArray(v) && /^[a-z0-9_]{1,40}$/.test(k)) out.received[k] = v.length;
 
   // Actividad: pasos, distancia y calorías activas, por intervalo (diario o por bloques)
   for (const [key, field, type] of [["steps", "count", "steps"], ["distance", "meters", "distance"], ["active_calories", "calories", "active_calories"]]) {
@@ -93,6 +96,21 @@ export function parsePayload(p) {
   for (const r of arr("vo2_max")) {
     const t = ms(r.time), v = num(r.ml_per_kg_per_min);
     if (t != null && v != null && v > 5 && v < 100) out.points.push({ type: "vo2max", t, v, id: r.metadata?.id });
+  }
+  // Presión arterial (mmHg): una medición = dos puntos con la misma hora
+  for (const r of arr("blood_pressure")) {
+    const t = ms(r.time), sys = num(r.systolic), dia = num(r.diastolic);
+    if (t == null || sys == null || dia == null || sys < 60 || sys > 260 || dia < 30 || dia > 160 || sys <= dia) continue;
+    out.vitals.push({ type: "bp_sys", t, v: sys }, { type: "bp_dia", t, v: dia });
+  }
+  // Saturación de oxígeno (%): muestra (percentage) o bloque (avg/min/max)
+  for (const r of arr("oxygen_saturation")) {
+    const t = ms(r.time);
+    let v = num(r.avg) ?? num(r.percentage), lo = num(r.min);
+    if (v != null && v > 0 && v <= 1) { v *= 100; if (lo != null && lo <= 1) lo *= 100; }   // por si llega como fracción
+    if (t == null || v == null || v < 50 || v > 100) continue;
+    out.vitals.push({ type: "spo2", t, v: round(v, 1) });
+    if (lo != null && lo >= 50 && lo <= 100) out.vitals.push({ type: "spo2_min", t, v: round(lo, 1) });
   }
   // Sueño: solo duración por etapa
   for (const r of arr("sleep")) {
@@ -138,6 +156,8 @@ export async function handleIngest(request, env) {
   stmts.push(...bulkUpsert("health_hr", ["time", "avg", "min", "max"], d.hr.map(h => [h.t, h.avg, h.min, h.max]),
     "time", "avg = excluded.avg, min = excluded.min, max = excluded.max").map(sql => env.DB.prepare(sql)));
 
+  stmts.push(...bulkUpsert("health_points", ["type", "time", "value"], d.vitals.map(v => [`'${v.type}'`, v.t, v.v]),
+    "type, time", "value = excluded.value").map(sql => env.DB.prepare(sql)));
   for (const pt of d.points) {
     stmts.push(env.DB.prepare("INSERT INTO health_points (type, time, value, id) VALUES (?, ?, ?, ?) ON CONFLICT(type, time) DO UPDATE SET value = excluded.value, id = excluded.id")
       .bind(pt.type, pt.t, pt.v, pt.id || null));
@@ -159,6 +179,8 @@ export async function handleIngest(request, env) {
   }
   stmts.push(env.DB.prepare("DELETE FROM health_hr WHERE time < ?").bind(Date.now() - KEEP_HR_DAYS * DAY_MS));
   stmts.push(env.DB.prepare("INSERT INTO health_meta (key, value) VALUES ('last_ingest', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value").bind(String(Date.now())));
+  stmts.push(env.DB.prepare("INSERT INTO health_meta (key, value) VALUES ('last_received', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value")
+    .bind(JSON.stringify({ at: Date.now(), types: d.received })));
 
   // batch = una sola ida y vuelta a D1, y todo o nada
   if (stmts.length > 45) return json({ error: "payload_too_large", hint: "Bajá la resolución del pulso en la app (5 minutos)." }, 413);
@@ -166,7 +188,7 @@ export async function handleIngest(request, env) {
 
   return json({
     ok: true,
-    stored: { activity: d.buckets.length, heart_rate: d.hr.length, points: d.points.length, sleep: d.sleep.length, exercise: d.exercise.length, deleted: d.deleted.length },
+    stored: { activity: d.buckets.length, heart_rate: d.hr.length, points: d.points.length, vitals: d.vitals.length, sleep: d.sleep.length, exercise: d.exercise.length, deleted: d.deleted.length },
   }, 200);
 }
 
@@ -181,21 +203,23 @@ export async function handleSummary(env, lang, headers) {
   const since = now - (DAYS + 1) * DAY_MS;
   const q = (sql, ...b) => env.DB.prepare(sql).bind(...b).all().then(r => r.results || []);
 
-  const [buckets, hrDaily, lastPulse, points, sleeps, workouts, meta] = await Promise.all([
+  const [buckets, hrDaily, lastPulse, points, vitals, sleeps, workouts, meta, received] = await Promise.all([
     q("SELECT type, start_time, end_time, value FROM health_buckets WHERE end_time >= ?", since),
     q("SELECT time, avg, min, max FROM health_hr WHERE time >= ?", since),
     q("SELECT time, avg FROM health_hr ORDER BY time DESC LIMIT 1"),
-    q("SELECT type, time, value FROM health_points WHERE time >= ? ORDER BY time", now - 120 * DAY_MS),
+    q("SELECT type, time, value FROM health_points WHERE type IN ('resting_hr', 'vo2max') AND time >= ? ORDER BY time", now - 120 * DAY_MS),
+    q("SELECT type, time, value FROM health_points WHERE type IN ('bp_sys', 'bp_dia', 'spo2', 'spo2_min') AND time >= ? ORDER BY time", since),
     q("SELECT end_time, duration_s, light_s, deep_s, rem_s, awake_s FROM health_sleep WHERE end_time >= ? ORDER BY end_time", since),
     q("SELECT id, type, start_time, end_time, duration_s, distance_m, steps, title FROM health_exercise ORDER BY start_time DESC LIMIT 20"),
     q("SELECT value FROM health_meta WHERE key = 'last_ingest'"),
+    q("SELECT value FROM health_meta WHERE key = 'last_received'"),
   ]);
 
   // Días: últimos 30, del más viejo al más nuevo
   const days = new Map();
   for (let i = DAYS - 1; i >= 0; i--) {
     const date = dayOf(now - i * DAY_MS, env);
-    days.set(date, { date, steps: 0, distance_km: 0, active_kcal: 0, sleep_h: null, hr_avg: null, hr_min: null, hr_max: null, resting_bpm: null, workouts: 0 });
+    days.set(date, { date, steps: 0, distance_km: 0, active_kcal: 0, sleep_h: null, hr_avg: null, hr_min: null, hr_max: null, resting_bpm: null, bp_sys: null, bp_dia: null, bp_n: 0, spo2_avg: null, spo2_min: null, workouts: 0 });
   }
   for (const b of buckets) {
     const day = days.get(dayOf((b.start_time + b.end_time) / 2, env));
@@ -219,6 +243,25 @@ export async function handleSummary(env, lang, headers) {
     const day = days.get(dayOf(p.time, env));
     if (day) day.resting_bpm = round(p.value);
   }
+  // Presión y SpO2: promedio del día (la presión, también la cantidad de mediciones); SpO2 con su mínimo
+  const vAcc = new Map();
+  for (const v of vitals) {
+    const date = dayOf(v.time, env);
+    const a = vAcc.get(date) || { sys: [], dia: [], spo2: [], low: [] };
+    ({ bp_sys: a.sys, bp_dia: a.dia, spo2: a.spo2, spo2_min: a.low })[v.type].push(v.value);
+    vAcc.set(date, a);
+  }
+  const avgOf = xs => (xs.length ? xs.reduce((s, x) => s + x, 0) / xs.length : null);
+  for (const [date, a] of vAcc) {
+    const day = days.get(date);
+    if (!day) continue;
+    if (a.sys.length && a.dia.length) Object.assign(day, { bp_sys: round(avgOf(a.sys)), bp_dia: round(avgOf(a.dia)), bp_n: Math.min(a.sys.length, a.dia.length) });
+    if (a.spo2.length) Object.assign(day, { spo2_avg: round(avgOf(a.spo2), 1), spo2_min: round(Math.min(...a.spo2, ...a.low), 1) });
+  }
+  const lastOf = type => { for (let i = vitals.length - 1; i >= 0; i--) if (vitals[i].type === type) return vitals[i]; return null; };
+  const lastSys = lastOf("bp_sys"), lastDia = lastSys && vitals.find(v => v.type === "bp_dia" && v.time === lastSys.time);
+  const lastSpo2 = lastOf("spo2");
+
   const sleepNights = sleeps.map(s => ({
     date: dayOf(s.end_time, env),           // la noche se anota en el día en que te despertás
     hours: round(s.duration_s / 3600, 1),
@@ -257,7 +300,10 @@ export async function handleSummary(env, lang, headers) {
       last_minutes_ago: pulse ? Math.max(0, Math.round((now - pulse.time) / 60_000)) : null,
       resting: latest("resting_hr"),
       vo2max: latest("vo2max"),
+      bp: lastSys && lastDia ? { sys: round(lastSys.value), dia: round(lastDia.value), date: dayOf(lastSys.time, env) } : null,
+      spo2: lastSpo2 ? { value: round(lastSpo2.value, 1), date: dayOf(lastSpo2.time, env) } : null,
     },
+    received: (() => { try { return received[0] ? JSON.parse(received[0].value) : null; } catch { return null; } })(),
     sleep: sleepNights.slice(-14),
     workouts: workoutList,
   }, 200, { ...headers, "Cache-Control": "private, no-store" });

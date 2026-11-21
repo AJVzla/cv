@@ -151,14 +151,14 @@ const HEALTH_ENDPOINT = "https://cv-chat.anthonymasyrubi.workers.dev/health/summ
   }
 
   /* ---------- línea (pulso en reposo) ---------- */
-  function lineChart(box, rows, { value, label, unit }) {
+  function lineChart(box, rows, { value, label, unit, empty = "Tu reloj todavía no registró pulso en reposo.", max = Infinity, tip, fmt = v => v }) {
     box.innerHTML = "";
     const vals = rows.map(value).filter(v => v != null);
-    if (!vals.length) { box.innerHTML = '<p class="fx-empty">Tu reloj todavía no registró pulso en reposo.</p>'; return; }
+    if (!vals.length) { box.innerHTML = `<p class="fx-empty">${empty}</p>`; return; }
     const W = box.clientWidth || 600, H = W < 480 ? 150 : 170;
     const m = { t: 18, r: 46, b: 24, l: 30 };
     const iw = W - m.l - m.r, ih = H - m.t - m.b;
-    const lo = Math.floor((Math.min(...vals) - 4) / 5) * 5, hi = Math.ceil((Math.max(...vals) + 4) / 5) * 5;
+    const lo = Math.floor((Math.min(...vals) - 4) / 5) * 5, hi = Math.min(max, Math.ceil((Math.max(...vals) + 4) / 5) * 5);
     const x = i => m.l + (rows.length === 1 ? iw / 2 : (i / (rows.length - 1)) * iw);
     const y = v => m.t + ih - ((v - lo) / (hi - lo)) * ih;
     const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: "img", "aria-label": label }, box);
@@ -176,7 +176,7 @@ const HEALTH_ENDPOINT = "https://cv-chat.anthonymasyrubi.workers.dev/health/summ
     });
     el("path", { d, fill: "none", stroke: accent, "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }, svg);
     rows.forEach((r, i) => { const v = value(r); if (v != null && (i === last || rows.filter(rr => value(rr) != null).length < 6)) el("circle", { cx: x(i), cy: y(v), r: 4, fill: accent, stroke: surface, "stroke-width": 2 }, svg); });
-    const lv = el("text", { x: x(last) + 9, y: y(value(rows[last])) + 4, class: "fx-val" }, svg); lv.textContent = value(rows[last]) + " " + unit;
+    const lv = el("text", { x: x(last) + 9, y: y(value(rows[last])) + 4, class: "fx-val" }, svg); lv.textContent = fmt(value(rows[last])) + " " + unit;
     [0, rows.length - 1].forEach(i => {
       const t = el("text", { x: x(i), y: H - 6, "text-anchor": i ? "end" : "start", class: "fx-axis" }, svg);
       t.textContent = i ? "Hoy" : fmtShort(rows[i].date);
@@ -189,23 +189,28 @@ const HEALTH_ENDPOINT = "https://cv-chat.anthonymasyrubi.workers.dev/health/summ
       const i = Math.max(0, Math.min(rows.length - 1, Math.round(((px - m.l) / iw) * (rows.length - 1))));
       cross.setAttribute("x1", x(i)); cross.setAttribute("x2", x(i)); cross.setAttribute("opacity", .5);
       const v = value(rows[i]);
-      showTip(e, `<b>${fmtDay(rows[i].date)}</b><br>${v == null ? "Sin dato" : v + " " + unit}`);
+      showTip(e, `<b>${fmtDay(rows[i].date)}</b><br>${v == null ? "Sin dato" : tip ? tip(rows[i]) : fmt(v) + " " + unit}`);
     });
     hit.addEventListener("pointerleave", () => { cross.setAttribute("opacity", 0); hideTip(); });
   }
 
   /* ---------- rango de pulso por día (barras flotantes min–max + promedio) ---------- */
-  function rangeChart(box, rows) {
+  const HR_RANGE = {
+    lo: r => r.hr_min, hi: r => r.hr_max, mid: r => r.hr_avg, step: 20, label: "Pulso mínimo, máximo y promedio por día",
+    empty: "Todavía no hay pulso registrado.", tip: r => `Mín. ${r.hr_min} · Prom. ${r.hr_avg ?? "—"} · Máx. ${r.hr_max} bpm`,
+  };
+  function rangeChart(box, rows, opts = HR_RANGE) {
+    const { lo: loOf, hi: hiOf, mid: midOf, step, label, empty, tip } = { ...HR_RANGE, ...opts };
     box.innerHTML = "";
-    const have = rows.filter(r => r.hr_min != null && r.hr_max != null);
-    if (!have.length) { box.innerHTML = '<p class="fx-empty">Todavía no hay pulso registrado.</p>'; return; }
+    const have = rows.filter(r => loOf(r) != null && hiOf(r) != null);
+    if (!have.length) { box.innerHTML = `<p class="fx-empty">${empty}</p>`; return; }
     const W = box.clientWidth || 500, H = W < 480 ? 170 : 200;
     const m = { t: 14, r: 8, b: 26, l: 34 };
     const iw = W - m.l - m.r, ih = H - m.t - m.b;
-    const lo = Math.floor(Math.min(...have.map(r => r.hr_min)) / 20) * 20, hi = Math.ceil(Math.max(...have.map(r => r.hr_max)) / 20) * 20;
+    const lo = Math.floor(Math.min(...have.map(loOf)) / step) * step, hi = Math.max(lo + step, Math.ceil(Math.max(...have.map(hiOf)) / step) * step);
     const y = v => m.t + ih - ((v - lo) / (hi - lo)) * ih;
     const band = iw / rows.length, bw = Math.min(10, Math.max(3, band - 3));
-    const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: "img", "aria-label": "Pulso mínimo, máximo y promedio por día" }, box);
+    const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: "img", "aria-label": label }, box);
     const grid = css("--line"), accent = css("--accent"), ink = css("--ink");
     for (const t of [lo, (lo + hi) / 2, hi]) {
       el("line", { x1: m.l, x2: W - m.r, y1: y(t), y2: y(t), stroke: grid, "stroke-width": 1 }, svg);
@@ -213,9 +218,9 @@ const HEALTH_ENDPOINT = "https://cv-chat.anthonymasyrubi.workers.dev/health/summ
     }
     rows.forEach((r, i) => {
       const cx = m.l + i * band + band / 2;
-      if (r.hr_min != null) {
-        el("rect", { x: cx - bw / 2, y: y(r.hr_max), width: bw, height: Math.max(2, y(r.hr_min) - y(r.hr_max)), rx: Math.min(4, bw / 2), fill: accent, opacity: .35 }, svg);
-        if (r.hr_avg != null) el("rect", { x: cx - bw / 2 - 1, y: y(r.hr_avg) - 1, width: bw + 2, height: 2.5, fill: ink }, svg);
+      if (loOf(r) != null && hiOf(r) != null) {
+        el("rect", { x: cx - bw / 2, y: y(hiOf(r)), width: bw, height: Math.max(2, y(loOf(r)) - y(hiOf(r))), rx: Math.min(4, bw / 2), fill: accent, opacity: midOf ? .35 : .7 }, svg);
+        if (midOf && midOf(r) != null) el("rect", { x: cx - bw / 2 - 1, y: y(midOf(r)) - 1, width: bw + 2, height: 2.5, fill: ink }, svg);
       }
       const every = W < 480 ? 7 : 5;
       if ((i % every === 0 && i < rows.length - Math.ceil(every / 2)) || i === rows.length - 1) {
@@ -223,8 +228,8 @@ const HEALTH_ENDPOINT = "https://cv-chat.anthonymasyrubi.workers.dev/health/summ
         t.textContent = i === rows.length - 1 ? "Hoy" : fmtShort(r.date);
       }
       const hit = el("rect", { x: m.l + i * band, y: m.t, width: band, height: ih, fill: "transparent" }, svg);
-      hit.addEventListener("pointermove", e => showTip(e, r.hr_min == null ? `<b>${fmtDay(r.date)}</b><br>Sin datos`
-        : `<b>${fmtDay(r.date)}</b><br>Mín. ${r.hr_min} · Prom. ${r.hr_avg ?? "—"} · Máx. ${r.hr_max} bpm`));
+      hit.addEventListener("pointermove", e => showTip(e, loOf(r) == null ? `<b>${fmtDay(r.date)}</b><br>Sin datos`
+        : `<b>${fmtDay(r.date)}</b><br>${tip(r)}`));
       hit.addEventListener("pointerleave", hideTip);
     });
   }
@@ -372,6 +377,28 @@ const HEALTH_ENDPOINT = "https://cv-chat.anthonymasyrubi.workers.dev/health/summ
     $("fx-rhr-sub").textContent = h.vo2max ? `VO₂ máx ${nf1.format(h.vo2max.value)} ml/kg/min · ${relDay(h.vo2max.date, today.date)}` : (rhrAvg ? `Prom. ${Math.round(rhrAvg)} bpm` : "");
     lineChart($("fx-rhr-chart"), days, { value: x => x.resting_bpm, label: "Pulso en reposo por día", unit: "bpm" });
 
+    // Presión arterial y SpO2: los paneles aparecen solo si el reloj las registró
+    const hasBp = days.some(x => x.bp_sys != null), hasSpo2 = days.some(x => x.spo2_avg != null);
+    $("fx-bp-panel").hidden = !hasBp; $("fx-spo2-panel").hidden = !hasSpo2;
+    if (hasBp) {
+      $("fx-bp-sub").textContent = h.bp ? `Última ${h.bp.sys}/${h.bp.dia} mmHg · ${relDay(h.bp.date, today.date)}` : "";
+      rangeChart($("fx-bp-chart"), days, {
+        lo: x => x.bp_dia, hi: x => x.bp_sys, mid: null, step: 20, label: "Presión arterial por día: diastólica a sistólica",
+        empty: "Tu reloj todavía no registró presión arterial.",
+        tip: x => `${x.bp_sys}/${x.bp_dia} mmHg · ${x.bp_n} ${x.bp_n === 1 ? "medición" : "mediciones"}`,
+      });
+    }
+    if (hasSpo2) {
+      const lows = days.map(x => x.spo2_min).filter(v => v != null);
+      $("fx-spo2-sub").textContent = (h.spo2 ? `Última ${nf1.format(h.spo2.value)} % · ${relDay(h.spo2.date, today.date)}` : "") +
+        (lows.length ? ` · Mín. del período ${nf1.format(Math.min(...lows))} %` : "");
+      lineChart($("fx-spo2-chart"), days, {
+        value: x => x.spo2_avg, label: "Saturación de oxígeno, promedio por día", unit: "%", max: 100, fmt: v => nf1.format(v),
+        empty: "Tu reloj todavía no registró saturación de oxígeno.",
+        tip: x => `Prom. ${nf1.format(x.spo2_avg)} % · Mín. ${nf1.format(x.spo2_min)} %`,
+      });
+    }
+
     // Entrenamientos
     const mins30 = sum(ws.filter(w => days.length && w.date >= days[0].date).map(w => w.duration_min));
     $("fx-workouts-sub").textContent = ws.length ? `${ws.length} registrados · ${nf.format(mins30)} min en 30 días` : "";
@@ -398,8 +425,12 @@ const HEALTH_ENDPOINT = "https://cv-chat.anthonymasyrubi.workers.dev/health/summ
       : '<p class="fx-empty">Sin entrenamientos en los últimos 30 días.</p>';
 
     // Tabla
-    $("fx-table").innerHTML = "<thead><tr><th>Día</th><th>Pasos</th><th>Km</th><th>Kcal activas</th><th>Sueño (h)</th><th>Pulso reposo</th><th>Pulso prom.</th><th>Pulso mín–máx</th><th>Entrenamientos</th></tr></thead><tbody>" +
-      days.slice().reverse().map(x => `<tr><td>${fmtDay(x.date)}</td><td>${nf.format(x.steps)}</td><td>${nf1.format(x.distance_km)}</td><td>${nf.format(x.active_kcal)}</td><td>${x.sleep_h != null ? nf1.format(x.sleep_h) : "—"}</td><td>${x.resting_bpm ?? "—"}</td><td>${x.hr_avg ?? "—"}</td><td>${x.hr_min != null ? x.hr_min + "–" + x.hr_max : "—"}</td><td>${x.workouts || "—"}</td></tr>`).join("") + "</tbody>";
+    $("fx-table").innerHTML = "<thead><tr><th>Día</th><th>Pasos</th><th>Km</th><th>Kcal activas</th><th>Sueño (h)</th><th>Pulso reposo</th><th>Pulso prom.</th><th>Pulso mín–máx</th>" +
+      (hasBp ? "<th>Presión</th>" : "") + (hasSpo2 ? "<th>SpO₂ prom.</th>" : "") + "<th>Entrenamientos</th></tr></thead><tbody>" +
+      days.slice().reverse().map(x => `<tr><td>${fmtDay(x.date)}</td><td>${nf.format(x.steps)}</td><td>${nf1.format(x.distance_km)}</td><td>${nf.format(x.active_kcal)}</td><td>${x.sleep_h != null ? nf1.format(x.sleep_h) : "—"}</td><td>${x.resting_bpm ?? "—"}</td><td>${x.hr_avg ?? "—"}</td><td>${x.hr_min != null ? x.hr_min + "–" + x.hr_max : "—"}</td>` +
+        (hasBp ? `<td>${x.bp_sys != null ? x.bp_sys + "/" + x.bp_dia : "—"}</td>` : "") +
+        (hasSpo2 ? `<td>${x.spo2_avg != null ? nf1.format(x.spo2_avg) + " %" : "—"}</td>` : "") +
+        `<td>${x.workouts || "—"}</td></tr>`).join("") + "</tbody>";
   }
 
   /* ---------- datos ---------- */
@@ -410,7 +441,9 @@ const HEALTH_ENDPOINT = "https://cv-chat.anthonymasyrubi.workers.dev/health/summ
       const dt = new Date(now - i * 86_400_000 - 3 * 3600_000).toISOString().slice(0, 10);
       const s = Math.round(6500 + 4200 * Math.abs(Math.sin(i * 1.7)) + (i % 6 === 0 ? 3500 : 0)) * (i === 0 ? 0.55 : 1);
       days.push({ date: dt, steps: Math.round(s), distance_km: Math.round(s * 0.00078 * 100) / 100, active_kcal: Math.round(s * 0.045), sleep_h: null,
-        hr_avg: 70 + (i % 4), hr_min: 54 + (i % 3), hr_max: i % 6 === 0 ? 168 : 118 + (i % 9), resting_bpm: i % 5 === 3 ? null : 57 + Math.round(2 * Math.sin(i / 3)) + (i > 20 ? 1 : 0), workouts: i % 6 === 0 ? 1 : 0 });
+        hr_avg: 70 + (i % 4), hr_min: 54 + (i % 3), hr_max: i % 6 === 0 ? 168 : 118 + (i % 9), resting_bpm: i % 5 === 3 ? null : 57 + Math.round(2 * Math.sin(i / 3)) + (i > 20 ? 1 : 0), workouts: i % 6 === 0 ? 1 : 0,
+        bp_sys: i % 3 === 1 ? null : 116 + Math.round(5 * Math.sin(i / 2)), bp_dia: i % 3 === 1 ? null : 76 + Math.round(3 * Math.cos(i / 2)), bp_n: i % 3 === 1 ? 0 : 1 + (i % 2),
+        spo2_avg: Math.round((96.4 + 0.9 * Math.sin(i / 2.5)) * 10) / 10, spo2_min: Math.round((92.5 + 1.5 * Math.cos(i / 3)) * 10) / 10 });
       if (i < 14) {
         const hrs = Math.round((6.4 + 1.4 * Math.abs(Math.cos(i * 1.3))) * 10) / 10;
         const deep = Math.round(hrs * 0.18 * 10) / 10, rem = Math.round(hrs * 0.22 * 10) / 10, awake = Math.round(hrs * 0.06 * 10) / 10;
@@ -421,7 +454,8 @@ const HEALTH_ENDPOINT = "https://cv-chat.anthonymasyrubi.workers.dev/health/summ
       if (i % 7 === 2) workouts.unshift({ date: dt, type: 70, name: "Fuerza", title: null, duration_min: 50, distance_km: null, avg_bpm: 118, pace_min_km: null, steps: null });
     }
     return { updated_at: Date.now() - 9 * 60000, today: days[29], days, sleep, workouts,
-      heart: { last_bpm: 68, last_minutes_ago: 9, resting: { value: 57, date: days[29].date }, vo2max: { value: 46.3, date: days[27].date } } };
+      heart: { last_bpm: 68, last_minutes_ago: 9, resting: { value: 57, date: days[29].date }, vo2max: { value: 46.3, date: days[27].date },
+        bp: { sys: days[29].bp_sys, dia: days[29].bp_dia, date: days[29].date }, spo2: { value: days[29].spo2_avg, date: days[29].date } } };
   }
 
   /* Clave del panel: se guarda en este navegador para que recargar no la pida de nuevo.

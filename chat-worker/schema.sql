@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS health_hr (
 
 -- Mediciones sueltas: pulso en reposo, VO2 máx.
 CREATE TABLE IF NOT EXISTS health_points (
-  type  TEXT    NOT NULL,            -- resting_hr | vo2max
+  type  TEXT    NOT NULL,            -- resting_hr | vo2max | bp_sys | bp_dia | spo2 | spo2_min
   time  INTEGER NOT NULL,
   value REAL    NOT NULL,
   id    TEXT,
