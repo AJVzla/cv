@@ -7,6 +7,8 @@
  * POST /telegram       Webhook de Telegram: las respuestas de Anthony a un aviso llegan acá.
  * POST /health/ingest  La app HC Webhook manda los datos de Health Connect (ver health.js).
  * GET  /health/summary La página /estado-fisico lee el resumen.
+ * GET  /trailhead      Insignias y certificaciones de Trailhead (copia que se actualiza cada hora).
+ *                      En Telegram, /trailhead fuerza una actualización.
  * POST /event          El sitio avisa una descarga del PDF (se cuenta y te llega a Telegram).
  *                      En Telegram, /stats muestra descargas y conversaciones de los últimos días.
  *
@@ -18,6 +20,7 @@
 import { PROFILE, RULES } from "./profile.js";
 import { handleIngest, handleSummary } from "./health.js";
 import { EVENT_TYPES, countEvent, statsText } from "./stats.js";
+import { refreshTrailhead, handleTrailheadGet } from "./trailhead.js";
 
 const MAX_MESSAGES = 20;          // turnos de historial que se mandan a la IA
 const MAX_CHARS = 800;            // largo máximo de cada mensaje del visitante
@@ -225,6 +228,14 @@ async function handleTelegram(request, env) {
   }
 
   const command = msg.text.trim().split(/[\s@]/)[0];
+  if (command === "/trailhead") {
+    const r = await refreshTrailhead(env, text => tg(env, "sendMessage", { chat_id: env.TELEGRAM_CHAT_ID, text }));
+    const text = r.ok
+      ? `✅ Trailhead actualizado: ${r.badges} insignias${r.new ? `, ${r.new} nuevas` : ""}. ${r.stats?.rank ? "Rango: " + r.stats.rank + "." : ""}`
+      : `⚠️ No pude actualizar Trailhead: ${r.error}`;
+    await tg(env, "sendMessage", { chat_id: env.TELEGRAM_CHAT_ID, text });
+    return new Response("ok");
+  }
   if (command === "/stats") {
     const text = await statsText(env).catch(err => `⚠️ No pude leer las métricas: ${String(err?.message || err).slice(0, 200)}`);
     await tg(env, "sendMessage", { chat_id: env.TELEGRAM_CHAT_ID, text, parse_mode: "HTML" });
@@ -272,6 +283,12 @@ export default {
       return json({ reply: "No pude responder ahora, pero podés escribirme a ajmercato@gmail.com.", degraded: true }, 200, cors.headers);
     }
   },
+
+  /* Cada hora (ver [triggers] en wrangler.toml): revisa las insignias de Trailhead */
+  async scheduled(event, env, ctx) {
+    const notify = text => (env.TELEGRAM_CHAT_ID ? tg(env, "sendMessage", { chat_id: env.TELEGRAM_CHAT_ID, text }) : Promise.resolve());
+    ctx.waitUntil(refreshTrailhead(env, notify).catch(() => {}));
+  },
 };
 
 async function route(request, env, ctx) {
@@ -282,6 +299,14 @@ async function route(request, env, ctx) {
 
     const cors = corsHeaders(request.headers.get("Origin") || "", env);
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: cors.headers });
+
+    /* Página /roadmap-salesforce-specialist: datos públicos del perfil de Trailhead */
+    if (url.pathname === "/trailhead" && request.method === "GET") {
+      if (!cors.ok) return json({ error: "forbidden_origin" }, 403, cors.headers);
+      const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+      if (rateLimited(`trailhead:${ip}`)) return json({ error: "rate_limited" }, 429, cors.headers);
+      return handleTrailheadGet(env, cors.headers);
+    }
 
     /* Página /estado-fisico */
     if (url.pathname === "/health/summary" && request.method === "GET") {

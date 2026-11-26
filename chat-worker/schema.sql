@@ -87,3 +87,14 @@ CREATE TABLE IF NOT EXISTS events (
   n    INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (day, type, lang)
 );
+
+-- ---------- Roadmap de Salesforce (Trailhead) ----------
+-- El Worker las crea solo si no existen.
+CREATE TABLE IF NOT EXISTS trailhead_badges (
+  path       TEXT PRIMARY KEY,   -- modules/prompt-fundamentals
+  title      TEXT NOT NULL,
+  type       TEXT,
+  icon       TEXT,
+  first_seen INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS trailhead_meta (key TEXT PRIMARY KEY, value TEXT);

@@ -31,6 +31,9 @@ HABILIDADES
 - IA aplicada: GitHub Copilot, Claude Code, Codex.
 - Herramientas: Git, GitHub, Jira, Figma, WordPress, Drupal, SQL (fundamentos), Photoshop, Premiere Pro.
 
+FORMACIÓN EN CURSO EN SALESFORCE
+- Está haciendo los trails de Agentblazer en Trailhead y prepara Marketing Cloud Engagement Specialist (2027), después Engagement Developer y Marketing Cloud Next Consultant. Su avance en vivo, con cada insignia: https://anthonymasyrubi.com/roadmap-salesforce-specialist/ · Perfil de Trailhead: https://www.salesforce.com/trailblazer/anthonymasyrubi
+
 PROYECTOS PROPIOS
 - Little Bites (2026): sitio en React, Vite, Tailwind CSS, Framer Motion y Swiper para un emprendimiento de postres de Maracaibo. Catálogo por categorías, carrito que se guarda y pedido armado para WhatsApp, sin backend. Optimizó la carga en el celular de 8,6 MB a 0,7 MB. Caso: https://anthonymasyrubi.com/proyectos/little-bites/ · Código: https://github.com/AJVzla/littlebites
 

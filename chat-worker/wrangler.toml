@@ -13,8 +13,14 @@ GEMINI_FALLBACK_MODEL = "gemini-flash-lite-latest"
 HUMAN_MINUTES = "30"
 # Zona horaria para contar los días en /estado-fisico (minutos respecto de UTC). Buenos Aires = -180.
 HEALTH_TZ_OFFSET_MIN = "-180"
+# Usuario de tu perfil público de Trailhead (salesforce.com/trailblazer/<usuario>), para /roadmap-salesforce-specialist.
+TRAILHEAD_SLUG = "anthonymasyrubi"
 
-# Base de datos (chat + estado físico). Las variables van ARRIBA de esta sección:
+# Tareas programadas: revisa Trailhead una vez por hora (minuto 17).
+[triggers]
+crons = ["17 * * * *"]
+
+# Base de datos (chat, estado físico y roadmap). Las variables van ARRIBA de esta sección:
 # todo lo que esté debajo de [[d1_databases]] se toma como parte de la base, no como variable.
 [[d1_databases]]
 binding = "DB"
