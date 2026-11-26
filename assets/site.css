@@ -901,3 +901,35 @@ h1.page-title {
 }
 .rm-dot.is-ok { display: grid; place-items: center; border: 0; background: var(--accent); color: #fff; font-size: 14px; font-weight: 700; }
 .fact .fact-link { margin-top: 4px; font-size: 14.5px; }
+
+/* ---------- Tarjeta "En vivo" del roadmap ---------- */
+.live-card {
+  display: flex; flex-direction: column; gap: 8px; margin: 22px 0 8px; padding: 18px 20px 16px;
+  border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 14px;
+  background: linear-gradient(100deg, color-mix(in srgb, var(--accent) 7%, var(--sheet)), var(--sheet) 70%);
+  color: var(--ink); text-decoration: none; transition: border-color .2s, transform .2s;
+}
+.live-card:hover { border-color: var(--accent); }
+.live-card:hover .live-cta svg { transform: translateX(3px); }
+.live-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.live-head { display: flex; align-items: center; gap: 10px; }
+.live-tag { display: inline-flex; align-items: center; gap: 7px; padding: 3px 10px 3px 8px; border-radius: 99px; background: #D93636; color: #fff; font-size: 12px; font-weight: 700; letter-spacing: .02em; }
+.live-dot { width: 7px; height: 7px; border-radius: 50%; background: #fff; }
+@media (prefers-reduced-motion: no-preference) { .live-dot { animation: live-blink 1.6s ease-in-out infinite; } }
+@keyframes live-blink { 50% { opacity: .25; } }
+.live-from { font-size: 13px; color: var(--muted); }
+.live-title { font: 700 21px/1.2 var(--display); letter-spacing: -.015em; }
+.live-sub { font-size: 15px; color: var(--muted); }
+.live-progress { display: flex; flex-direction: column; gap: 6px; margin-top: 2px; }
+.live-progress[hidden] { display: none; }
+.live-bar { display: block; height: 8px; border-radius: 99px; background: var(--chip); overflow: hidden; }
+.live-bar i { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 99px; transition: width .8s ease; }
+.live-stats { font-size: 13.5px; color: var(--muted); }
+.live-cta { display: inline-flex; align-items: center; gap: 6px; margin-top: 2px; font-weight: 600; color: var(--accent); }
+.live-cta svg { transition: transform .2s; }
+[data-mode="dark"] .live-tag { background: #E5484D; }
+[data-mode="outlook"] .live-card { border-radius: 0; background: #FFF2CC; border-left-color: #C00000; font-family: "Times New Roman", Times, serif; }
+[data-mode="outlook"] .live-tag { border-radius: 0; background: #C00000; }
+[data-mode="outlook"] .live-cta { color: #0563C1; text-decoration: underline; }
+@media (prefers-reduced-motion: reduce) { .live-bar i, .live-cta svg, .live-card { transition: none; } }
+@media (max-width: 640px) { .live-title { font-size: 19px; } }
