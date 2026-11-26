@@ -116,17 +116,21 @@
 
       <section class="rm-summary" id="rm-summary" aria-label="Resumen de mi perfil de Trailhead">
         <div class="rm-rank">
-          <img id="rm-rank-img" src="" alt="" width="56" height="56" hidden>
+          <img id="rm-rank-img" src="" alt="" width="64" height="64" hidden>
           <div>
-            <p class="rm-label">Rango en Trailhead</p>
-            <p class="rm-big" id="rm-rank">—</p>
-            <p class="rm-small" id="rm-next"></p>
+            <p class="rm-rank-name" id="rm-rank">—</p>
+            <p class="rm-small">Rango en Trailhead<span id="rm-next"></span></p>
           </div>
         </div>
-        <div><p class="rm-label">Insignias</p><p class="rm-big" id="rm-badges">—</p></div>
-        <div><p class="rm-label">Puntos</p><p class="rm-big" id="rm-points">—</p></div>
-        <div><p class="rm-label">Avance del roadmap</p><p class="rm-big" id="rm-pct">—</p>
-          <div class="rm-bar" role="img" id="rm-bar" aria-label="Avance del roadmap"><i style="width:0%"></i></div></div>
+        <dl class="rm-stats">
+          <div><dt>Insignias</dt><dd id="rm-badges">—</dd></div>
+          <div><dt>Puntos</dt><dd id="rm-points">—</dd></div>
+          <div><dt>Roadmap</dt><dd id="rm-pct">—</dd></div>
+        </dl>
+        <div class="rm-progress">
+          <div class="rm-bar" role="img" id="rm-bar" aria-label="Avance del roadmap"><i style="width:0%"></i></div>
+          <p class="rm-small" id="rm-progress-text"></p>
+        </div>
       </section>
 
       <section class="block" aria-labelledby="s-stages">

@@ -78,10 +78,11 @@
     $("rm-pct").textContent = pct + " %";
     $("rm-bar").setAttribute("aria-label", `${pct} % del roadmap completo`);
     $("rm-bar").firstElementChild.style.width = pct + "%";
+    $("rm-progress-text").textContent = `${done} de ${total} pasos completados, entre cursos y exámenes`;
     const s = th?.stats;
     if (s) {
       $("rm-rank").textContent = s.rank || "—";
-      $("rm-next").textContent = s.next_rank ? `Próximo: ${s.next_rank}` : "";
+      $("rm-next").textContent = s.next_rank ? ` · próximo: ${s.next_rank}` : "";
       $("rm-badges").textContent = nf.format(s.badges ?? earned.size);
       $("rm-points").textContent = s.points != null ? nf.format(s.points) : "—";
       $("rm-rank-img").addEventListener("error", () => { $("rm-rank-img").hidden = true; }, { once: true });

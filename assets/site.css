@@ -838,13 +838,22 @@ h1.page-title {
 .fx-chart-note { margin: 8px 0 0; font-size: 12.5px; line-height: 1.45; color: var(--muted); }
 
 /* ---------- Roadmap Salesforce ---------- */
-.rm-summary { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.3fr; gap: 12px; margin: 8px 0 26px; }
-.rm-summary > div { border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; background: var(--sheet); }
-.rm-rank { display: flex; gap: 12px; align-items: center; }
-.rm-rank img { flex: none; width: 56px; height: 56px; object-fit: contain; }
+.rm-summary {
+  display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 18px 28px;
+  margin: 8px 0 28px; padding: 20px 22px; border: 1px solid var(--line); border-radius: 16px; background: var(--sheet);
+}
+.rm-rank { display: flex; gap: 14px; align-items: center; }
+.rm-rank img { flex: none; width: 64px; height: 64px; object-fit: contain; }
+.rm-rank-name { margin: 0; font: 700 28px/1.05 var(--display); letter-spacing: -.02em; }
+.rm-small { margin: 4px 0 0; font-size: 13.5px; color: var(--muted); }
+.rm-stats { display: grid; grid-template-columns: repeat(3, 1fr); margin: 0; }
+.rm-stats > div { padding: 2px 0 2px 20px; border-left: 1px solid var(--line); }
+.rm-stats dt { font-size: 13px; color: var(--muted); }
+.rm-stats dd { margin: 2px 0 0; font: 700 26px/1.1 var(--display); letter-spacing: -.02em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rm-progress { grid-column: 1 / -1; }
+.rm-progress .rm-bar { margin-top: 0; height: 10px; }
 .rm-label { margin: 0 0 4px; font-size: 13px; color: var(--muted); }
 .rm-big { margin: 0; font: 700 26px/1.1 var(--display); letter-spacing: -.02em; }
-.rm-small { margin: 3px 0 0; font-size: 13px; color: var(--muted); }
 .rm-bar { display: block; height: 8px; margin-top: 8px; background: var(--chip); border-radius: 99px; overflow: hidden; }
 .rm-bar i { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width .6s ease; }
 .rm-loading { color: var(--muted); }
@@ -887,11 +896,15 @@ h1.page-title {
 .rm-cert.is-done .rm-cert-icon { background: var(--accent); color: #fff; }
 .rm-cert-name { margin: 0; font-weight: 600; }
 .rm-foot { margin-top: 18px; font-size: 13.5px; color: var(--muted); }
-[data-mode="outlook"] .rm-summary > div, [data-mode="outlook"] .rm-stage, [data-mode="outlook"] .rm-cert, [data-mode="outlook"] .rm-bar, [data-mode="outlook"] .rm-bar i { border-radius: 0; }
+[data-mode="outlook"] .rm-summary, [data-mode="outlook"] .rm-stage, [data-mode="outlook"] .rm-cert, [data-mode="outlook"] .rm-bar, [data-mode="outlook"] .rm-bar i { border-radius: 0; }
 @media (prefers-reduced-motion: reduce) { .rm-bar i, .rm-stage > summary::after, .rm-group > summary::after { transition: none; } }
 @media (max-width: 640px) {
-  .rm-summary { grid-template-columns: 1fr 1fr; }
-  .rm-rank, .rm-summary > div:last-child { grid-column: span 2; }
+  .rm-summary { grid-template-columns: 1fr; gap: 16px; padding: 16px; }
+  .rm-rank img { width: 52px; height: 52px; }
+  .rm-rank-name { font-size: 24px; }
+  .rm-stats > div { padding-left: 14px; }
+  .rm-stats > div:first-child { padding-left: 0; border-left: 0; }
+  .rm-stats dd { font-size: 22px; }
   .rm-stage > summary { grid-template-columns: 1fr; padding-right: 44px; }
   .rm-when { text-align: left; }
   .rm-group > summary { grid-template-columns: 1fr auto; }
