@@ -177,6 +177,20 @@
       <p class="contact-line"><span>ajmercato@gmail.com</span> <span class="sep" aria-hidden="true">&nbsp;·&nbsp;</span> <a href="tel:+541159056478">+54 11 5905 6478</a></p>
       <p class="toast" id="toast" role="status" aria-live="polite"></p>
 
+      <a class="live-card" href="roadmap-salesforce-specialist/" aria-describedby="live-sub">
+        <span class="live-head">
+          <span class="live-tag"><span class="live-dot" aria-hidden="true"></span><span data-i18n="liveTag">En vivo</span></span>
+          <span class="live-from">Trailhead</span>
+        </span>
+        <span class="live-title" data-i18n="liveTitle">Mirá mi camino a especialista en Salesforce Marketing Cloud</span>
+        <span class="live-sub" id="live-sub" data-i18n="liveSub">Cada insignia que gano en Trailhead aparece en mi roadmap una hora después, como mucho.</span>
+        <span class="live-progress" hidden id="live-progress">
+          <span class="live-bar" aria-hidden="true"><i id="live-fill"></i></span>
+          <span class="live-stats" id="live-stats"></span>
+        </span>
+        <span class="live-cta"><span data-i18n="liveCta">Seguilo en vivo</span> <svg viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </a>
+
       <section class="block" aria-labelledby="s-spec">
         <h2 id="s-spec" data-i18n="specTitle">Especialidades</h2>
         <p class="inbox-intro" data-i18n="specIntro">Tres mensajes más en esta bandeja, uno por cada cosa que hago.</p>
@@ -441,6 +455,7 @@
     spec1: "HTML email development for Outlook, Gmail and dark mode", spec1s: "Templates from scratch, Outlook conditional code and testing in Litmus and Email on Acid.",
     spec2: "Salesforce Marketing Cloud development: AMPscript and CloudPages", spec2s: "Dynamic emails, CloudPages forms and well-organized Data Extensions.",
     projTitle: "Live projects", projIntro: "Open them and try them: these aren't screenshots. (Pages in Spanish.)", proj1: "Little Bites: a dessert shop with WhatsApp ordering", proj1s: "Cart, a ready-to-send WhatsApp order and a 0.7 MB load on mobile.",
+    liveTag: "Live", liveTitle: "Follow my path to Salesforce Marketing Cloud specialist", liveSub: "Every badge I earn on Trailhead shows up in my roadmap within the hour.", liveCta: "Follow it live",
     spec4: "An email built 100% in HTML", spec4s: "View it on desktop and mobile, in light and dark mode, and download the code.",
     spec3: "Web development with React, WordPress and Drupal", spec3s: "Campaign landing pages, reusable components and sites that are easy to maintain.",
     notesTitle: "Technical notes", notesIntro: "What I've learned solving real email and Marketing Cloud problems. (Notes in Spanish.)", notesAll: "See all notes",
@@ -743,6 +758,7 @@
     t.textContent = en ? "CV downloaded." : "CV descargado.";
   });
 </script>
+<script src="assets/live-roadmap.js" defer></script>
 <script src="assets/analytics.js" defer></script>
 <script src="assets/chat.js" defer></script>
 </body>
