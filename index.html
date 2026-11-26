@@ -363,6 +363,11 @@
               <h3 data-i18n="edu2">Técnico en Mantenimiento Mecánico</h3>
               <p>INCES<br>Maracaibo, Venezuela · 2008–2012</p>
             </div>
+            <div class="fact no-pdf" style="margin-top:18px">
+              <h3 data-i18n="edu3">Certificaciones Salesforce (en curso)</h3>
+              <p>Trailhead · Agentblazer y Marketing Cloud Engagement · 2026–2027</p>
+              <p class="fact-link"><a href="roadmap-salesforce-specialist/" data-i18n="edu3link">Ver mi avance en vivo</a></p>
+            </div>
           </div>
           <div>
             <h2 data-i18n="langTitle">Idiomas</h2>
@@ -466,7 +471,7 @@
     s2: "Maintained and optimized web platforms and applications.",
     s3: "Managed hosting, domains and site migrations.",
     s4: "Ran email on Google Workspace and executed bulk email campaigns.",
-    eduTitle: "Education", edu1: "Systems Engineering", edu2: "Mechanical Maintenance Technician",
+    eduTitle: "Education", edu1: "Systems Engineering", edu2: "Mechanical Maintenance Technician", edu3: "Salesforce certifications (in progress)", edu3link: "See my live progress",
     langTitle: "Languages", "lang-es": "Spanish", "lang-es-lvl": "Native", "lang-en": "English", "lang-en-lvl": "Intermediate (B1)",
     sign1: "If you're building a team and need someone to own the frontend and make sure emails look right everywhere, get in touch.",
     sign2: "Best,",
@@ -674,7 +679,7 @@
     const factH = f => hOf(txt("h3", f), 9.6, "bold") + hOf(f.querySelector("p").innerText.split("\n").map(clean).filter(Boolean).join(" · "), 8.8, "normal") + 1.2;
     const langH = l => hOf(txt("h3", l), 9.6, "bold") + hOf(txt("small", l), 8.8, "normal") + 1.2;
     const sum = (list, fn) => [...list].reduce((a, el) => a + fn(el), 0);
-    ensure(2 + 11.5 * PT * 1.25 + 3 + Math.max(sum(eduSec.querySelectorAll(".fact"), factH), sum(eduSec.querySelectorAll(".lang"), langH)));
+    ensure(2 + 11.5 * PT * 1.25 + 3 + Math.max(sum(eduSec.querySelectorAll(".fact:not(.no-pdf)"), factH), sum(eduSec.querySelectorAll(".lang"), langH)));
     y += 2;
     const topY = y;
     [0, 1].forEach(i => {
@@ -685,7 +690,7 @@
     });
     const bodyY = topY + 11.5 * PT * 1.25 + 3;
     y = bodyY;
-    eduSec.querySelectorAll(".fact").forEach(f => {
+    eduSec.querySelectorAll(".fact:not(.no-pdf)").forEach(f => {
       const detail = f.querySelector("p").innerText.split("\n").map(clean).filter(Boolean).join(" · ");
       lines(txt("h3", f), colX[0], colW, 9.6, "bold", INK);
       lines(detail, colX[0], colW, 8.8, "normal", MUTED);

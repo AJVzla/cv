@@ -1,0 +1,522 @@
+{
+ "updated": "2026-11-26",
+ "stages": [
+  {
+   "id": "etapa-1",
+   "name": "Etapa 1 · Base y Engagement Specialist",
+   "when": "Dic 2026 a feb 2027",
+   "goal": "Aprobar Marketing Cloud Engagement Specialist.",
+   "groups": [
+    {
+     "name": "Agentblazer Champion 2026",
+     "url": "https://trailhead.salesforce.com/es/content/learn/trails/become-an-agentblazer-champion-2026",
+     "note": "IA y Agentforce. Gratis en Trailhead.",
+     "items": [
+      {
+       "path": "modules/becoming-an-agentblazer-quick-look",
+       "title": "Convertirse en Agentblazer"
+      },
+      {
+       "path": "modules/artificial-intelligence-fundamentals",
+       "title": "Aspectos fundamentales de la inteligencia artificial"
+      },
+      {
+       "path": "modules/generative-ai-basics",
+       "title": "Aspectos básicos sobre la IA generativa"
+      },
+      {
+       "path": "modules/natural-language-processing-basics",
+       "title": "Aspectos básicos sobre el procesamiento de lenguaje natural"
+      },
+      {
+       "path": "modules/large-language-models",
+       "title": "Modelos de lenguaje grandes"
+      },
+      {
+       "path": "modules/ai-fluency-fundamentals",
+       "title": "AI Fluency Fundamentals"
+      },
+      {
+       "path": "modules/data-fundamentals-for-ai",
+       "title": "Aspectos fundamentales de los datos para la IA"
+      },
+      {
+       "path": "modules/ai-data-crm-quick-look",
+       "title": "AI, datos y CRM: un vistazo rápido"
+      },
+      {
+       "path": "modules/prompt-fundamentals",
+       "title": "Aspectos fundamentales de las solicitudes"
+      },
+      {
+       "path": "modules/prompt-builder-basics",
+       "title": "Conceptos básicos de Prompt Builder"
+      },
+      {
+       "path": "modules/the-einstein-trust-layer",
+       "title": "Capa de confianza de Agentforce"
+      },
+      {
+       "path": "modules/autonomous-agents",
+       "title": "Agentes autónomos"
+      },
+      {
+       "path": "modules/reasoning-in-artificial-intelligence",
+       "title": "Razonamiento en la inteligencia artificial"
+      },
+      {
+       "path": "modules/salesforce-headless-360-quick-look",
+       "title": "Introduction to AIforce"
+      },
+      {
+       "path": "modules/secure-and-trusted-headless-foundation",
+       "title": "Secure and Trusted Headless Foundation"
+      },
+      {
+       "path": "modules/headless-360-use-cases-in-action",
+       "title": "Actionable Headless Use Cases"
+      },
+      {
+       "path": "modules/salesforce-in-claude-quick-look",
+       "title": "Sales Cloud in Claude: Quick Look"
+      },
+      {
+       "path": "modules/introduction-to-agentforce",
+       "title": "Introducción a Agentforce"
+      },
+      {
+       "path": "modules/einstein-copilot-basics",
+       "title": "Fundamentos de Agentforce"
+      },
+      {
+       "path": "modules/new-agentforce-builder-quick-look",
+       "title": "New Agentforce Builder: Quick Look"
+      },
+      {
+       "path": "modules/introduction-to-agent-builder",
+       "title": "Introducción a Agentforce Builder"
+      },
+      {
+       "path": "modules/agentforce-for-setup-quick-look",
+       "title": "Setup with Agentforce: Quick Look"
+      },
+      {
+       "path": "modules/agentforce-service-agent-quick-look",
+       "title": "Agentforce for Service"
+      },
+      {
+       "path": "modules/agentforce-sales-agents-quick-look",
+       "title": "Agentforce for Sales: un vistazo rápido"
+      },
+      {
+       "path": "modules/agentforce-on-the-salesforce-mobile-app-quick-look",
+       "title": "Agentforce en la aplicación móvil de Salesforce"
+      },
+      {
+       "path": "modules/agentexchange-quick-look",
+       "title": "AgentExchange: Quick Look"
+      },
+      {
+       "path": "modules/quick-start-assemble-a-service-agent-with-agentforce-builder",
+       "title": "Inicio rápido: Crear un agente de servicio con Agentforce Builder"
+      },
+      {
+       "path": "modules/programmatic-instructions-in-agentforce",
+       "title": "Programmatic Instructions in Agentforce"
+      },
+      {
+       "path": "modules/use-employee-agents-to-get-work-done",
+       "title": "Use Employee Agents to Get Work Done"
+      }
+     ]
+    },
+    {
+     "name": "Agentblazer Innovator 2026",
+     "url": "https://trailhead.salesforce.com/es/content/learn/trails/become-an-agentblazer-innovator-2026",
+     "note": "Planificar, construir y evaluar agentes.",
+     "items": [
+      {
+       "path": "modules/ai-strategy",
+       "title": "Estrategia de IA"
+      },
+      {
+       "path": "modules/ai-data-project-planning",
+       "title": "IA y datos: planificación del proyecto"
+      },
+      {
+       "path": "modules/agentforce-agent-planning",
+       "title": "Agentforce: planificación de agentes"
+      },
+      {
+       "path": "modules/agent-behavior-basics",
+       "title": "Agent Behavior Basics"
+      },
+      {
+       "path": "modules/agent-behavior-evaluation",
+       "title": "Agent Behavior Evaluation"
+      },
+      {
+       "path": "modules/trusted-agentic-ai",
+       "title": "IA de agentes de confianza"
+      },
+      {
+       "path": "modules/threat-modeling-for-ai-agents",
+       "title": "Modelado de amenazas para agentes de IA"
+      },
+      {
+       "path": "projects/quick-start-prompt-builder",
+       "title": "Inicio rápido: Prompt Builder"
+      },
+      {
+       "path": "projects/quick-start-create-prompt-builder-flex-template",
+       "title": "Inicio rápido: Plantilla Flex con Prompt Builder"
+      },
+      {
+       "path": "projects/quick-start-create-a-sales-email-prompt-template",
+       "title": "Inicio rápido: Plantilla de solicitud de email para ventas"
+      },
+      {
+       "path": "projects/quick-start-einstein-copilot",
+       "title": "Inicio rápido: Acciones de agentes"
+      },
+      {
+       "path": "projects/customize-a-service-agent-with-prompts-flows-and-actions",
+       "title": "Personalizar un agente de servicio con solicitudes, flujos y acciones"
+      },
+      {
+       "path": "modules/agentforce-deployment-quick-look",
+       "title": "Implementación de Agentforce para agentes de servicio"
+      },
+      {
+       "path": "modules/agentforce-help-agent",
+       "title": "Casey, Your Help Agent"
+      },
+      {
+       "path": "modules/agentforce-voice-quick-look",
+       "title": "Agentforce Voice"
+      },
+      {
+       "path": "modules/agentforce-grid",
+       "title": "Agentforce Grid"
+      },
+      {
+       "path": "modules/headless-tools-and-functionality",
+       "title": "Salesforce Headless Toolkit"
+      },
+      {
+       "path": "modules/data-foundation-for-headless-functionality",
+       "title": "Data Foundation for Headless Functionality"
+      },
+      {
+       "path": "modules/headless-360-use-a-conversation-to-build-an-agent",
+       "title": "Headless: usar una conversación para crear un agente"
+      },
+      {
+       "path": "modules/quick-start-agentforce-coworker",
+       "title": "Quick Start: Agentforce Coworker"
+      },
+      {
+       "path": "modules/agentforce-sdr-setup-and-customization",
+       "title": "Agentes para la implicación de los clientes a escala"
+      },
+      {
+       "path": "modules/agentforce-for-sales-coaching-setup-and-customization",
+       "title": "Coach de ventas de Agentforce"
+      },
+      {
+       "path": "projects/build-your-first-sales-coach",
+       "title": "Cree su primer coach de ventas"
+      },
+      {
+       "path": "projects/quick-start-build-an-agent-to-create-quotes-fast",
+       "title": "Inicio rápido: Agente para crear presupuestos"
+      },
+      {
+       "path": "modules/agentic-sales-cycle-powered-by-headless-360",
+       "title": "Agentic Sales Cycle Powered by Headless"
+      },
+      {
+       "path": "modules/agentforce-service-assistant",
+       "title": "Agentforce Service Assistant"
+      },
+      {
+       "path": "superbadges/superbadge-agentforce-service-agents",
+       "title": "Superbadge: Agentforce Service Agents"
+      },
+      {
+       "path": "modules/agentforce-for-industries-quick-look",
+       "title": "Agentforce for Industries: un vistazo rápido"
+      },
+      {
+       "path": "modules/agentforce-for-financial-services-cloud",
+       "title": "Agentforce for Financial Services"
+      },
+      {
+       "path": "modules/agentic-advisor-for-agentforce-financial-services",
+       "title": "Agentic Advisor for Financial Services Cloud"
+      },
+      {
+       "path": "modules/meeting-concierge",
+       "title": "Meeting Concierge"
+      }
+     ]
+    },
+    {
+     "name": "Trailmix oficial de Engagement Specialist",
+     "url": "https://trailhead.salesforce.com/users/strailhead/trailmixes/prepare-for-your-marketing-cloud-email-specialist-credential",
+     "note": "Lo que evalúa el examen.",
+     "items": [
+      {
+       "path": "modules/mrkt",
+       "title": "Marketing Cloud Engagement Basics"
+      },
+      {
+       "path": "modules/mr-email-marketing-strategies",
+       "title": "Email Marketing Strategies"
+      },
+      {
+       "path": "modules/european-union-privacy-law-basics",
+       "title": "European Union Privacy Law Basics"
+      },
+      {
+       "path": "modules/california-consumer-privacy-act-basics",
+       "title": "California Consumer Privacy Act Basics"
+      },
+      {
+       "path": "modules/marketing-automation-strategies",
+       "title": "Marketing Automation Strategies"
+      },
+      {
+       "path": "modules/marketing-cloud-einstein-activation-quick-look",
+       "title": "Einstein Activation: Quick Look"
+      },
+      {
+       "path": "modules/einstein-messaging-insights-quick-look",
+       "title": "Einstein Messaging Insights: Quick Look"
+      },
+      {
+       "path": "modules/einstein-engagement-scoring-in-marketing-cloud",
+       "title": "Einstein Engagement Scoring"
+      },
+      {
+       "path": "modules/einstein-send-time-and-frequency-optimization",
+       "title": "Einstein Send Time and Frequency Optimization"
+      },
+      {
+       "path": "modules/email-creation-and-sending",
+       "title": "Email Creation and Sending"
+      },
+      {
+       "path": "modules/marketing-content-creation",
+       "title": "Marketing Content Creation"
+      },
+      {
+       "path": "modules/interactive-email-forms",
+       "title": "Interactive Email Forms"
+      },
+      {
+       "path": "modules/content-builder-features",
+       "title": "Content Builder Features"
+      },
+      {
+       "path": "modules/quick-start-create-and-send-an-email-with-marketing-cloud",
+       "title": "Quick Start: Create and Send an Email"
+      },
+      {
+       "path": "modules/transactional-messaging",
+       "title": "Transactional Messaging"
+      },
+      {
+       "path": "modules/audience-segmentation",
+       "title": "Audience Segmentation"
+      },
+      {
+       "path": "modules/content-builder-basics",
+       "title": "Content Builder Basics"
+      },
+      {
+       "path": "modules/einstein-content-selection-basics",
+       "title": "Einstein Content Selection Basics"
+      },
+      {
+       "path": "modules/customer-journey-basics",
+       "title": "Customer Journey Basics"
+      },
+      {
+       "path": "modules/marketing-cloud-apis",
+       "title": "Marketing Cloud Engagement APIs"
+      },
+      {
+       "path": "modules/automation-studio-activities",
+       "title": "Automation Studio Activities"
+      },
+      {
+       "path": "modules/journey-builder-basics",
+       "title": "Journey Builder Basics"
+      },
+      {
+       "path": "modules/quick-start-create-and-send-a-message-in-journey-builder",
+       "title": "Quick Start: Create and Send a Message in Journey Builder"
+      },
+      {
+       "path": "modules/journey-builder-campaigns",
+       "title": "Journey Builder Campaigns"
+      },
+      {
+       "path": "modules/path-optimizer-in-journey-builder",
+       "title": "Path Optimizer in Journey Builder"
+      },
+      {
+       "path": "modules/advanced-customer-journeys",
+       "title": "Advanced Customer Journeys"
+      },
+      {
+       "path": "modules/journey-campaign-analytics-and-optimization",
+       "title": "Journey Campaign Analytics and Optimization"
+      },
+      {
+       "path": "modules/datorama-reports-for-marketing-cloud",
+       "title": "Intelligence Reports for Engagement"
+      },
+      {
+       "path": "modules/marketing-and-consumer-privacy",
+       "title": "Marketing and Consumer Privacy"
+      },
+      {
+       "path": "modules/marketing-cloud-data-management",
+       "title": "Marketing Cloud Engagement Data Management"
+      },
+      {
+       "path": "modules/email-deliverability-essentials",
+       "title": "Email Deliverability Essentials"
+      }
+     ]
+    }
+   ],
+   "cert": {
+    "title": "Marketing Cloud Engagement Specialist",
+    "match": [
+     "Engagement Specialist",
+     "Email Specialist"
+    ],
+    "url": "https://trailhead.salesforce.com/es/credentials/marketingcloudemailspecialist",
+    "cost": "USD 200"
+   }
+  },
+  {
+   "id": "etapa-2",
+   "name": "Etapa 2 · Engagement Developer",
+   "when": "Mar a jun 2027",
+   "goal": "Aprobar Marketing Cloud Engagement Developer: AMPscript, SSJS, SQL y APIs.",
+   "groups": [
+    {
+     "name": "Desarrollo en Marketing Cloud Engagement",
+     "url": "https://trailhead.salesforce.com/es/credentials/marketingclouddeveloper",
+     "note": "Módulos base para el examen de Developer.",
+     "items": [
+      {
+       "path": "modules/marketing-cloud-developer-basics",
+       "title": "Marketing Cloud Developer Essentials"
+      },
+      {
+       "path": "modules/marketing-cloud-contact-management",
+       "title": "Marketing Cloud Contact Management"
+      },
+      {
+       "path": "modules/marketing-cloud-data-management",
+       "title": "Marketing Cloud Engagement Data Management"
+      },
+      {
+       "path": "modules/marketing-cloud-security",
+       "title": "Maximize Marketing Cloud Engagement Security"
+      },
+      {
+       "path": "modules/contact-deletion-in-marketing-cloud",
+       "title": "Effective Contact Deletion in Marketing Cloud"
+      },
+      {
+       "path": "modules/marketing-cloud-apis",
+       "title": "Marketing Cloud Engagement APIs"
+      },
+      {
+       "path": "modules/automation-studio-activities",
+       "title": "Automation Studio Activities"
+      }
+     ]
+    }
+   ],
+   "cert": {
+    "title": "Marketing Cloud Engagement Developer",
+    "match": [
+     "Engagement Developer",
+     "Marketing Cloud Developer"
+    ],
+    "url": "https://trailhead.salesforce.com/es/credentials/marketingclouddeveloper",
+    "cost": "USD 200"
+   }
+  },
+  {
+   "id": "etapa-3",
+   "name": "Etapa 3 · Marketing Cloud Next Consultant",
+   "when": "Jul a dic 2027",
+   "goal": "Sumar Data 360 y Agentforce aplicados a marketing.",
+   "groups": [
+    {
+     "name": "Trail de Marketing Cloud Next Consultant",
+     "url": "https://trailhead.salesforce.com/es/content/learn/trails/prepare-for-your-marketing-cloud-next-consultant-certification",
+     "note": "Preparación oficial, unas 17 horas.",
+     "items": [
+      {
+       "path": "modules/marketing-cloud-next-basics",
+       "title": "Marketing Cloud Next Basics"
+      },
+      {
+       "path": "modules/marketing-cloud-setup-quick-look",
+       "title": "Marketing Cloud Next Setup: Quick Look"
+      },
+      {
+       "path": "modules/marketing-cloud-next-email-sending-essentials",
+       "title": "Email Sending Essentials"
+      },
+      {
+       "path": "modules/consent-management-fundamentals-for-marketing-cloud-next",
+       "title": "Consent Management Fundamentals"
+      },
+      {
+       "path": "modules/data-360-for-marketing-cloud-next-first",
+       "title": "Data 360 for Marketing Cloud Next"
+      },
+      {
+       "path": "modules/data-activation-in-marketing-cloud-next",
+       "title": "Data Activation in Marketing Cloud Next"
+      },
+      {
+       "path": "modules/email-content-and-personalization-in-marketing-cloud-next",
+       "title": "Email Content and Personalization"
+      },
+      {
+       "path": "modules/campaign-optimization-with-flows-in-marketing-cloud-next",
+       "title": "Campaign Optimization with Flows"
+      },
+      {
+       "path": "modules/lead-generation-with-marketing-cloud-next-forms-and-landing-pages",
+       "title": "Lead Generation with Forms and Landing Pages"
+      },
+      {
+       "path": "modules/conversational-marketing-fundamentals-for-marketing-cloud-next",
+       "title": "Conversational Marketing Fundamentals"
+      }
+     ]
+    }
+   ],
+   "cert": {
+    "title": "Marketing Cloud Next Consultant",
+    "match": [
+     "Next Consultant"
+    ],
+    "url": "https://trailhead.salesforce.com/es/credentials/marketingcloudnextconsultant",
+    "cost": "USD 200"
+   }
+  }
+ ]
+}
